@@ -32,9 +32,7 @@ require('conform').setup({
 })
 
 -- Setup nvim-lint
-require('lint').linters_by_ft = {
-  lua = { 'selene' },
-}
+require('lint').linters_by_ft = {}
 
 -- Show lint errors on write
 vim.api.nvim_create_autocmd({ 'BufWritePost', 'BufReadPost' }, {

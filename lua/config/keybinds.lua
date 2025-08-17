@@ -41,6 +41,10 @@ key('i', '<A-k>', '<esc><cmd>m .-2<cr>==gi', 'Move Up')
 key('v', '<A-j>', ":<C-u>execute \"'<,'>move '>+\" . v:count1<cr>gv=gv", 'Move Down')
 key('v', '<A-k>', ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv=gv", 'Move Up')
 
+-- Trouble
+key('n', '<leader>td', ':TodoTrouble<CR>', 'Show Trouble todo list')
+key('n', '<leader>tt', ':Trouble diagnostics toggle win.relative=win<CR>', 'Show Trouble diagnostic list')
+
 -- NeoTree
 key('n', '<C-n>', '<cmd>Neotree toggle<CR>', 'Toggle NeoTree')
 
