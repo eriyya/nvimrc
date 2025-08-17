@@ -7,7 +7,7 @@
 **Dependencies**
 - Ripgrep
 - fd
-- Python3
+- Python >=3.9
 - NodeJS
 - Yarn
 - fzf

@@ -137,7 +137,7 @@ autocmd('LspAttach', {
 
     local format = function()
       require('conform').format({
-        bufnr = ev.buf,
+        bufnr = vim.api.nvim_get_current_buf(),
         lsp_format = 'fallback',
         async = false,
         timeout_ms = 3000,

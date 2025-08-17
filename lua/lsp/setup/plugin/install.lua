@@ -3,7 +3,7 @@ local tsls = { 'typescript-language-server', 'eslint-lsp' }
 local cssls = 'css-lsp'
 
 local ft_to_lsp = {
-  lua = { 'lua-language-server' },
+  lua = { 'lua-language-server', 'selene' },
   typescript = tsls,
   typescriptreact = tsls,
   javascript = tsls,
@@ -31,10 +31,16 @@ vim.api.nvim_create_autocmd({ 'BufReadPre', 'FileType' }, {
     end
     local lsp = ft_to_lsp[ft]
     local registry = require('mason-registry')
+
     local servers = util.ternary(type(lsp) == 'table', lsp, { lsp })
     servers = vim.tbl_filter(function(v)
       return not registry.is_installed(v)
     end, servers)
+
+    if not registry.is_installed('codespell') then
+      table.insert(servers, 'codespell')
+    end
+
     if #servers > 0 then
       vim.cmd('MasonInstall ' .. table.concat(servers, ' '))
     end

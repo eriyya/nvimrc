@@ -23,6 +23,8 @@ enable_lsp({
 -- Setup conform
 require('conform').setup({
   formatters_by_ft = {
+    ['*'] = { 'codespell' },
+    ['_'] = { 'trim_whitespace' },
     lua = { 'stylua' },
   },
   default_format_opts = {
@@ -32,7 +34,9 @@ require('conform').setup({
 })
 
 -- Setup nvim-lint
-require('lint').linters_by_ft = {}
+require('lint').linters_by_ft = {
+  lua = { 'selene' },
+}
 
 -- Show lint errors on write
 vim.api.nvim_create_autocmd({ 'BufWritePost', 'BufReadPost' }, {
