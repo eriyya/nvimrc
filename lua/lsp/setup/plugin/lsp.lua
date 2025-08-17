@@ -18,6 +18,9 @@ enable_lsp({
   'cssls',
   'jsonls',
   'marksman',
+  'zls',
+  'rust_analyzer',
+  'powershell_es',
 })
 
 -- Setup conform
