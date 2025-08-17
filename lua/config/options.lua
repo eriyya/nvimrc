@@ -60,6 +60,7 @@ vim.g.markdown_fenced_languages = {
 
 if require('util').IS_WINDOWS then
   vim.opt.shell = 'pwsh'
+  vim.o.shell = 'pwsh'
 end
 
 vim.schedule(function()

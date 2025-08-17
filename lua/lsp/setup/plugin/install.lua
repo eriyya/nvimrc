@@ -18,6 +18,10 @@ local ft_to_lsp = {
   markdown = 'marksman',
   zig = 'zls',
   rust = 'rust-analyzer',
+  go = 'gopls',
+  c = 'clangd',
+  cpp = 'clangd',
+  ps1 = 'powershell-editor-services',
 }
 
 local ft_list = vim.tbl_keys(ft_to_lsp)

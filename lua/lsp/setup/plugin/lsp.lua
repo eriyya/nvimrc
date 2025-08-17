@@ -21,6 +21,8 @@ enable_lsp({
   'zls',
   'rust_analyzer',
   'powershell_es',
+  'gopls',
+  'clangd',
 })
 
 -- Setup conform
