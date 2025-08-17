@@ -14,6 +14,22 @@ M.fn = function(f, ...)
   end
 end
 
+function M.tbl_some(func, tbl)
+  for _, v in ipairs(tbl) do
+    if func(v) then
+      return true
+    end
+  end
+  return false
+end
+
+function M.ternary(cond, a, b)
+  if cond then
+    return a
+  end
+  return b
+end
+
 M.accept_ai_suggestion = function(fallback)
   local suggestion = require('supermaven-nvim.completion_preview')
   if suggestion.has_suggestion() then

@@ -129,13 +129,19 @@ end, '[Snacks] Toggle Terminal')
 autocmd('LspAttach', {
   group = augroup('UserLspConfig', { clear = true }),
   callback = function(ev)
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
+
     local format = function()
       require('conform').format({
-        bufnr = vim.api.nvim_get_current_buf(),
+        bufnr = ev.buf,
         lsp_format = 'fallback',
-        async = true,
+        async = false,
         timeout_ms = 3000,
       })
+
+      if client and client.name == 'eslint' then
+        vim.cmd('silent LspEslintFixAll')
+      end
     end
 
     key('n', '<leader>f', format, '[LSP] Format document')
@@ -153,7 +159,6 @@ autocmd('LspAttach', {
     key('n', '[d', fn(vim.diagnostic.jump, { count = -1, float = true }), '[LSP] Goto prev diagnostic')
     key('n', ']d', fn(vim.diagnostic.jump, { count = 1, float = true }), '[LSP] Goto next diagnostic')
 
-    local client = vim.lsp.get_client_by_id(ev.data.client_id)
     -- Toggle inlay hints
     if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
       key('n', '<leader>th', function()

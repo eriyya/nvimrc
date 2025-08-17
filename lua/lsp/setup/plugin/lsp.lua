@@ -13,6 +13,7 @@ end
 enable_lsp({
   'lua_ls',
   'ts_ls',
+  'eslint',
   'html',
   'cssls',
   'jsonls',
@@ -23,6 +24,10 @@ enable_lsp({
 require('conform').setup({
   formatters_by_ft = {
     lua = { 'stylua' },
+  },
+  default_format_opts = {
+    lsp_format = 'fallback',
+    timeout_ms = 3000,
   },
 })
 

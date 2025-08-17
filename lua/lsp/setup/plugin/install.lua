@@ -1,4 +1,5 @@
-local tsls = 'typescript-language-server'
+local util = require('util')
+local tsls = { 'typescript-language-server', 'eslint-lsp' }
 local cssls = 'css-lsp'
 
 local ft_to_lsp = {
@@ -29,12 +30,11 @@ vim.api.nvim_create_autocmd({ 'BufReadPre', 'FileType' }, {
       return
     end
     local lsp = ft_to_lsp[ft]
-    if not require('mason-registry').is_installed(lsp[1]) then
-      local servers = lsp
-      if type(lsp) == 'table' then
-        servers = table.concat(lsp, ' ')
-      end
-      vim.cmd('MasonInstall ' .. servers)
+    local registry = require('mason-registry')
+    local servers = util.ternary(type(lsp) == 'table', lsp, { lsp })
+    servers = vim.tbl_filter(function(v) return not registry.is_installed(v) end, servers)
+    if #servers > 0 then
+      vim.cmd('MasonInstall ' .. table.concat(servers, ' '))
     end
   end,
 })
