@@ -12,6 +12,8 @@ vim.o.number = true
 vim.wo.number = true
 vim.opt.number = true
 vim.opt.termguicolors = true
+vim.opt.grepformat = '%f:%l:%c:%m'
+vim.opt.grepprg = 'rg --vimgrep'
 
 vim.opt.ruler = false
 vim.opt.numberwidth = 2
@@ -34,7 +36,7 @@ vim.opt.signcolumn = 'yes'
 vim.opt.splitbelow = true
 vim.opt.splitright = true
 vim.opt.undofile = true
-
+vim.opt.sessionoptions = { 'buffers', 'curdir', 'tabpages', 'winsize', 'help', 'globals', 'skiprtp', 'folds' }
 vim.opt.shortmess:append({ W = true, I = true, c = true, C = true })
 vim.opt.winminwidth = 5 -- Minimum window width
 
@@ -43,11 +45,14 @@ vim.opt.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 vim.opt.scrolloff = 10
 
+vim.opt.spelllang = { 'en' }
+
 vim.o.signcolumn = 'yes'
 vim.o.completeopt = 'menuone,noselect'
 vim.o.commentstring = '' -- Set to empty string for treesitter aware commenting in mini.comment
 vim.o.laststatus = 3
 
+vim.g.markdown_recommended_style = 0
 vim.g.markdown_fenced_languages = {
   'html',
   'css',

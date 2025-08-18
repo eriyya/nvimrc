@@ -15,12 +15,23 @@ autocmd('TextYankPost', {
 augroup('LineNumbers', { clear = true })
 autocmd('InsertEnter', {
   group = 'LineNumbers',
-
-  command = ':set nu nornu',
+  callback = function()
+    if vim.bo[vim.api.nvim_get_current_buf()].filetype == 'neo-tree' then
+      vim.opt.number = false
+    else
+      vim.cmd([[set nu nornu]])
+    end
+  end,
 })
 autocmd('InsertLeave', {
   group = 'LineNumbers',
-  command = ':set nu rnu',
+  callback = function()
+    if vim.bo[vim.api.nvim_get_current_buf()].filetype == 'neo-tree' then
+      vim.opt.number = false
+    else
+      vim.cmd([[set nu rnu]])
+    end
+  end,
 })
 
 -- Disable continue comment on new line
