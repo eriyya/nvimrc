@@ -1,8 +1,11 @@
----@brief
---- lspconfig helper functions (https://github.com/neovim/nvim-lspconfig/blob/master/lua/lspconfig/util.lua)
----
-
 local M = {}
+
+-- replacement for get_install_path since it's not available in mason2
+function M.get_mason_package_path(pkg)
+  return vim.fn.expand('$MASON/packages/' .. pkg)
+end
+
+---- Below are helper functions from lspconfig (https://github.com/neovim/nvim-lspconfig/blob/master/lua/lspconfig/util.lua)
 
 --- Appends `new_names` to `root_files` if `field` is found in any such file in any ancestor of `fname`.
 ---

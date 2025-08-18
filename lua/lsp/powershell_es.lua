@@ -35,11 +35,12 @@
 ---   cmd = {'pwsh', '-NoLogo', '-NoProfile', '-Command', "c:/PSES/Start-EditorServices.ps1 ..."},
 --- })
 --- ```
+local util = require('lsp.setup.lsp-util')
 
 return {
   cmd = function(dispatchers)
     local temp_path = vim.fn.stdpath('cache')
-    local bundle_path = vim.lsp.config.powershell_es.bundle_path
+    local bundle_path = util.get_mason_package_path('powershell-editor-services')
 
     local shell = vim.lsp.config.powershell_es.shell or 'pwsh'
 
