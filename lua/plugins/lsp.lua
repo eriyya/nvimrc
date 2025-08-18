@@ -55,12 +55,12 @@ vim.config = {}
 vim.config.lsp_init = false
 
 --- Call LSP server setup code
-vim.api.nvim_create_autocmd({ 'BufRead', 'BufReadPre', 'BufNewFile' }, {
+vim.api.nvim_create_autocmd({ 'BufReadPre', 'BufNewFile' }, {
   callback = function()
     if vim.config.lsp_init then
       return
     end
-    require('lsp')
+    require('lsp').init()
     vim.config.lsp_init = true
   end,
 })

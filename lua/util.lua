@@ -15,9 +15,9 @@ M.fn = function(f, ...)
   end
 end
 
----@param cond function
----@param a boolean
----@param b boolean
+---@param cond boolean
+---@param a any
+---@param b any
 function M.ternary(cond, a, b)
   if cond then
     return a
