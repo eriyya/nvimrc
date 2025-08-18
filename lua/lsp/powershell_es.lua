@@ -35,7 +35,7 @@
 ---   cmd = {'pwsh', '-NoLogo', '-NoProfile', '-Command', "c:/PSES/Start-EditorServices.ps1 ..."},
 --- })
 --- ```
-local util = require('lsp.setup.lsp-util')
+local util = require('lsp.util.lsp-util')
 
 return {
   cmd = function(dispatchers)

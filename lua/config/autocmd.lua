@@ -46,7 +46,7 @@ autocmd('BufEnter', {
 })
 
 -- wrap and check for spell in text filetypes
-vim.api.nvim_create_autocmd('FileType', {
+autocmd('FileType', {
   group = augroup('wrap_spell', { clear = true }),
   pattern = { 'text', 'plaintex', 'typst', 'gitcommit', 'markdown' },
   callback = function()
@@ -54,3 +54,5 @@ vim.api.nvim_create_autocmd('FileType', {
     vim.opt_local.spell = true
   end,
 })
+
+
