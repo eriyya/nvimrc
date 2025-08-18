@@ -7,6 +7,7 @@ M.IS_WINDOWS = M.OS:find('Windows') and true or false
 M.IS_UNIX = M.OS == 'Linux' or M.OS == 'Darwin'
 M.IS_WSL = M.IS_UNIX and os_uname.release:find('Microsoft') and true or false
 
+---@param f function
 M.fn = function(f, ...)
   local args = { ... }
   return function(...)
@@ -14,7 +15,19 @@ M.fn = function(f, ...)
   end
 end
 
-function M.tbl_some(func, tbl)
+---@param cond function
+---@param a boolean
+---@param b boolean
+function M.ternary(cond, a, b)
+  if cond then
+    return a
+  end
+  return b
+end
+
+---@param func function
+---@param tbl table
+M.tbl_some = function(func, tbl)
   for _, v in ipairs(tbl) do
     if func(v) then
       return true
@@ -23,19 +36,12 @@ function M.tbl_some(func, tbl)
   return false
 end
 
-function M.ternary(cond, a, b)
-  if cond then
-    return a
-  end
-  return b
-end
-
-M.accept_ai_suggestion = function(fallback)
-  local suggestion = require('supermaven-nvim.completion_preview')
-  if suggestion.has_suggestion() then
-    suggestion.on_accept_suggestion()
-  elseif fallback then
-    fallback()
+---@param func function
+---@param catch? fun(res: unknown)
+M.try = function(func, catch)
+  local ok, result = pcall(func)
+  if not ok and catch then
+    return catch(result)
   end
 end
 

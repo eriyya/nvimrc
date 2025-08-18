@@ -16,6 +16,7 @@ return {
       },
       indent = { enable = false },
       ensure_installed = {
+        'diff',
         'norg',
         'go',
         'gomod',

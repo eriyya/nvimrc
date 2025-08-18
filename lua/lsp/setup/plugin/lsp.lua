@@ -1,11 +1,11 @@
+local util = require('util')
 require('mason').setup()
 
 local function enable_lsp(lsp_servers)
   for _, lsp in ipairs(lsp_servers) do
-    local conf_path = 'lsp.' .. lsp
-    if pcall(require, conf_path) then
-      vim.lsp.config(lsp, require(conf_path))
-    end
+    util.try(function()
+      vim.lsp.config(lsp, require('lsp.' .. lsp))
+    end)
   end
   vim.lsp.enable(lsp_servers)
 end

@@ -15,7 +15,7 @@
 
 ### Windows things
 
-Install requirements with Chocolatey or winget etc:  
+Install requirements with Chocolatey or winget etc:
 `choco install -y git ripgrep wget fd unzip gzip mingw make`
 
 ### Commands
@@ -26,6 +26,8 @@ Install requirements with Chocolatey or winget etc:
 ## Terminal stuff
 
 Currently using [Wezterm](https://github.com/wez/wezterm)
+
+Difftool [delta](https://github.com/dandavison/delta)
 
 ### Fonts
 
