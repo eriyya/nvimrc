@@ -21,6 +21,11 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = '\\'
 
+local disabled_plugins = {}
+if require('util').IS_WINDOWS then
+  disabled_plugins = { 'man' }
+end
+
 -- Setup lazy.nvim
 require('lazy').setup({
   spec = { import = 'plugins' },
@@ -32,7 +37,7 @@ require('lazy').setup({
   },
   performance = {
     rtp = {
-      disabled_plugins = { 'man' },
+      disabled_plugins = disabled_plugins,
     },
   },
 })
