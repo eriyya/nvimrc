@@ -51,9 +51,6 @@ vim.api.nvim_create_autocmd({ 'BufReadPre', 'FileType' }, {
   end,
 })
 
-vim.config = {}
-vim.config.lsp_init = false
-
 --- Call LSP server setup code
 vim.api.nvim_create_autocmd({ 'BufReadPre', 'BufNewFile' }, {
   once = true,
