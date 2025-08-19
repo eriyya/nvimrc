@@ -54,6 +54,9 @@ key('n', '<leader>tt', ':Trouble diagnostics toggle win.relative=win<CR>', 'Show
 -- NeoTree
 key('n', '<C-n>', '<cmd>Neotree toggle<CR>', 'Toggle NeoTree')
 
+-- Lazygit
+key('n', '<leader>lg', require('snacks.lazygit').open, 'Toggle Lazygit')
+
 -- Telescope
 key('n', '<C-p>', '<cmd>Telescope find_files<CR>', 'Find files')
 key('n', '<C-b>', '<cmd>Telescope buffers<CR>', 'Find buffers')

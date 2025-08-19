@@ -4,8 +4,11 @@ local M = {}
 
 local function enable_lsp(lsp_servers)
   for _, lsp in ipairs(lsp_servers) do
+    local conf = require('lsp.' .. lsp)
     util.try(function()
-      vim.lsp.config(lsp, require('lsp.' .. lsp))
+      local capabilities = conf.capabilities
+      conf.capabilities = require('blink.cmp').get_lsp_capabilities(capabilities)
+      vim.lsp.config(lsp, conf)
     end)
   end
   vim.lsp.enable(lsp_servers)
