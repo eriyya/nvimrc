@@ -1,5 +1,5 @@
 local util = require('util')
-local tsls = { 'typescript-language-server', 'eslint-lsp' }
+local tsls = { 'typescript-language-server', 'eslint-lsp', 'js-debug-adapter' }
 local cssls = 'css-lsp'
 
 local ft_to_lsp = {

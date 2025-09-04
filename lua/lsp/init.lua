@@ -38,6 +38,8 @@ M.init = function()
       ['*'] = { 'codespell' },
       ['_'] = { 'trim_whitespace' },
       lua = { 'stylua' },
+      javascript = { 'prettier' },
+      typescript = { 'prettier' },
     },
     default_format_opts = {
       lsp_format = 'fallback',
@@ -48,6 +50,7 @@ M.init = function()
   -- Setup nvim-lint
   require('lint').linters_by_ft = {
     lua = { 'selene' },
+    yaml = { 'actionlint' },
   }
 
   -- Show lint errors on write

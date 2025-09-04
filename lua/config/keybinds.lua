@@ -178,5 +178,12 @@ autocmd('LspAttach', {
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = ev.buf }))
       end, 'Toggle Inlay Hints')
     end
+
+    ---------------
+    ----- DAP -----
+    ---------------
+
+    key('n', '<leader>db', '<cmd>DapToggleBreakpoint<CR>', '[Debugger] Toggle breakpoint')
+    key('n', '<leader>dr', '<cmd>DapContinue<CR>', '[Debugger] Continue/Start')
   end,
 })

@@ -27,10 +27,10 @@ end
 require('lazy').setup({
   spec = { import = 'plugins' },
   pkg = {
-    sources = {
-      'lazy',
-      'packspec',
-    },
+    -- sources = {
+    --   'lazy',
+    --   'packspec',
+    -- },
   },
   performance = {
     rtp = {

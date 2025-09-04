@@ -9,7 +9,6 @@ local function neorg_markdown_preview(suffix, open_preview)
   end)
 end
 
-
 return {
   {
     'nvim-neorg/neorg',
@@ -17,6 +16,10 @@ return {
     ft = 'norg',
     cmd = 'NeorgWorkspace',
     version = '*',
+    dependencies = {
+      'pysan3/pathlib.nvim',
+      'nvim-neorg/lua-utils.nvim',
+    },
     config = function()
       require('neorg').setup({
         load = {
