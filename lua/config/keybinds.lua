@@ -145,12 +145,23 @@ autocmd('LspAttach', {
     local client = vim.lsp.get_client_by_id(ev.data.client_id)
 
     local format = function()
-      require('conform').format({
-        bufnr = vim.api.nvim_get_current_buf(),
-        lsp_format = 'fallback',
-        async = false,
-        timeout_ms = 3000,
-      })
+      local bufnr = vim.api.nvim_get_current_buf()
+      local fmt = require('conform')
+      local ignored_for_count = { 'codespell', 'trim_whitespace' }
+      local formatters = fmt.list_formatters(bufnr)
+
+      local real_formatters = {}
+      for _, formatter in ipairs(formatters) do
+        if not vim.tbl_contains(ignored_for_count, formatter.name) then
+          table.insert(real_formatters, formatter)
+        end
+      end
+
+      if #real_formatters == 0 then
+        fmt.format({ bufnr = bufnr, lsp_format = 'last', async = false, timeout_ms = 3000 })
+      else
+        fmt.format({ bufnr = bufnr, lsp_format = 'fallback', async = false, timeout_ms = 3000 })
+      end
 
       if client and client.name == 'eslint' then
         vim.cmd('silent LspEslintFixAll')
