@@ -61,6 +61,27 @@ key('n', '<leader>lg', require('snacks.lazygit').open, 'Toggle Lazygit')
 key('n', '<C-p>', '<cmd>Telescope find_files<CR>', 'Find files')
 key('n', '<C-b>', '<cmd>Telescope buffers<CR>', 'Find buffers')
 
+-- Tabs
+key('n', '<A-1>', '<cmd>BufferGoto 1<CR>', 'Go to tab 1')
+key('n', '<A-2>', '<cmd>BufferGoto 2<CR>', 'Go to tab 2')
+key('n', '<A-3>', '<cmd>BufferGoto 3<CR>', 'Go to tab 3')
+key('n', '<A-4>', '<cmd>BufferGoto 4<CR>', 'Go to tab 4')
+key('n', '<A-5>', '<cmd>BufferGoto 5<CR>', 'Go to tab 5')
+key('n', '<A-6>', '<cmd>BufferGoto 6<CR>', 'Go to tab 6')
+key('n', '<A-7>', '<cmd>BufferGoto 7<CR>', 'Go to tab 7')
+key('n', '<A-8>', '<cmd>BufferGoto 8<CR>', 'Go to tab 8')
+key('n', '<A-9>', '<cmd>BufferGoto 9<CR>', 'Go to tab 9')
+key('n', '<A-0>', '<cmd>BufferLast<CR>', 'Go to last tab')
+
+key('n', '<A-,>', '<cmd>BufferPrevious<CR>', 'Go to previous tab')
+key('n', '<A-.>', '<cmd>BufferNext<CR>', 'Go to next tab')
+
+key('n', '<A-<>', '<cmd>BufferMovePrevious<CR>', 'Move tab left')
+key('n', '<A->>', '<cmd>BufferMoveNext<CR>', 'Move tab right')
+
+key('n', '<A-c>', '<cmd>BufferClose<CR>', 'Close current tab')
+key('n', '<A-p>', '<cmd>BufferPick<CR>', 'Pick a tab to go to')
+
 -- Fuzzy find files
 key('n', '<leader>/', function()
   local telescope = require('telescope.builtin')
@@ -169,7 +190,6 @@ autocmd('LspAttach', {
         end, function()
           vim.notify('Failed formatting using ESLint')
         end)
-        vim.cmd('silent LspEslintFixAll')
       end
     end
 

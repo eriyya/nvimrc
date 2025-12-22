@@ -1,6 +1,6 @@
 return {
   'romgrk/barbar.nvim',
-  event = { 'BufWinEnter', 'BufReadPre', 'BufNewFile' },
+  -- event = 'VeryLazy',
   dependencies = {
     'nvim-tree/nvim-web-devicons',
   },
@@ -16,6 +16,9 @@ return {
       sort = {
         ignore_case = true,
       },
+    },
+    icons = {
+      buffer_index = true,
     },
   },
   version = '^1.0.0',
