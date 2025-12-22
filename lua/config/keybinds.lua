@@ -164,6 +164,11 @@ autocmd('LspAttach', {
       end
 
       if client and client.name == 'eslint' then
+        util.try(function()
+          vim.cmd('silent LspEslintFixAll')
+        end, function()
+          vim.notify('Failed formatting using ESLint')
+        end)
         vim.cmd('silent LspEslintFixAll')
       end
     end
