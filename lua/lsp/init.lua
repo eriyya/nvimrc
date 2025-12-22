@@ -30,6 +30,7 @@ M.init = function()
     'powershell_es',
     'gopls',
     'clangd',
+    'tailwindcss',
   })
 
   -- Setup conform
