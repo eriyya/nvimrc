@@ -1,6 +1,19 @@
 return {
   {
-    'github/copilot.vim',
+    'zbirenbaum/copilot.lua',
+    event = 'InsertEnter',
+    cmd = 'Copilot',
+    dependencies = {
+      'copilotlsp-nvim/copilot-lsp',
+    },
+    config = function()
+      require('copilot').setup({
+        suggestion = {
+          enabled = true,
+          auto_trigger = true,
+        },
+      })
+    end,
   },
   {
     enabled = false,

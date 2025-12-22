@@ -15,11 +15,18 @@ end
 key('i', 'kj', '<Esc>', 'Leave insert mode')
 key('i', 'jk', '<Esc>', 'Leave insert mode')
 
--- Supermaven accept inline suggestion
+-- AI accept inline suggestion
 key('i', '<C-l>', function()
-  local suggestion = require('supermaven-nvim.completion_preview')
-  if suggestion.has_suggestion() then
-    suggestion.on_accept_suggestion()
+  -- Supermaven
+  -- local suggestion = require('supermaven-nvim.completion_preview')
+  -- if suggestion.has_suggestion() then
+  --   suggestion.on_accept_suggestion()
+  -- end
+
+  -- Copilot
+  local suggestion = require('copilot.suggestion')
+  if suggestion.is_visible() then
+    suggestion.accept()
   end
 end, 'Accept AI suggestions')
 
