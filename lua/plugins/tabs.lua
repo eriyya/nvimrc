@@ -2,7 +2,7 @@ local eo = require('custom.editor-offset')
 
 return {
   'romgrk/barbar.nvim',
-  -- event = 'VeryLazy',
+  event = { 'BufReadPre', 'BufNewFile' },
   dependencies = {
     'nvim-tree/nvim-web-devicons',
   },

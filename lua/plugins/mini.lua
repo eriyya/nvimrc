@@ -2,10 +2,11 @@ return {
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     event = 'VeryLazy',
-    init = function()
-      require('mini.starter').setup()
-    end,
     config = function()
+      if vim.fn.argc() == 0 then
+        require('mini.starter').setup()
+      end
+
       -- Trailspace
       require('mini.trailspace').setup()
 

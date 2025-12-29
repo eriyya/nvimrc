@@ -1,6 +1,16 @@
 return {
-  event = { 'BufReadPre', 'BufNewFile' },
   'mfussenegger/nvim-dap',
+  keys = {
+    { '<leader>db', function() require('dap').toggle_breakpoint() end, desc = '[DAP] Toggle Breakpoint' },
+    { '<leader>dc', function() require('dap').continue() end, desc = '[DAP] Continue' },
+    { '<leader>di', function() require('dap').step_into() end, desc = '[DAP] Step Into' },
+    { '<leader>do', function() require('dap').step_over() end, desc = '[DAP] Step Over' },
+    { '<leader>dO', function() require('dap').step_out() end, desc = '[DAP] Step Out' },
+    { '<leader>dr', function() require('dap').repl.open() end, desc = '[DAP] Open REPL' },
+    { '<leader>dl', function() require('dap').run_last() end, desc = '[DAP] Run Last' },
+    { '<leader>du', function() require('dapui').toggle() end, desc = '[DAP] Toggle UI' },
+  },
+  cmd = { 'DapToggleBreakpoint', 'DapContinue', 'DapStepInto', 'DapStepOver', 'DapStepOut' },
   dependencies = {
     'nvim-neotest/nvim-nio',
     'rcarriga/nvim-dap-ui',

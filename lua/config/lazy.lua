@@ -18,9 +18,19 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = '\\'
 
-local disabled_plugins = {}
+local disabled_plugins = {
+  'gzip',
+  'matchit',
+  'matchparen',
+  'netrwPlugin',
+  'tarPlugin',
+  'tohtml',
+  'tutor',
+  'zipPlugin',
+}
+
 if require('util').IS_WINDOWS then
-  disabled_plugins = { 'man' }
+  table.insert(disabled_plugins, 'man')
 end
 
 -- Setup lazy.nvim

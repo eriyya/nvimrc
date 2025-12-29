@@ -1,6 +1,7 @@
 return {
   {
     'tiagovla/tokyodark.nvim',
+    lazy = false,
     priority = 1000,
     opts = {
       transparent_background = true,
@@ -19,6 +20,7 @@ return {
   },
   {
     'sainnhe/everforest',
+    lazy = true,
     priority = 1000,
     config = function()
       vim.g.everforest_background = 'hard'

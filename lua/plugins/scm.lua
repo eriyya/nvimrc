@@ -1,10 +1,11 @@
 return {
   -- Git
-  { 'tpope/vim-fugitive' },
-  { 'sindrets/diffview.nvim' },
+  { 'tpope/vim-fugitive', cmd = { 'Git', 'G', 'Gstatus', 'Gblame', 'Gpush', 'Gpull', 'Gdiffsplit' } },
+  { 'sindrets/diffview.nvim', cmd = { 'DiffviewOpen', 'DiffviewFileHistory', 'DiffviewClose' } },
   -- Jujutsu
   {
     'NicolasGB/jj.nvim',
+    cmd = { 'J' },
     config = function()
       require('jj').setup({})
     end,

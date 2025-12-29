@@ -123,30 +123,7 @@ key('v', '<A-j>', ":move '>+1<CR>gv=gv", 'Move selection down')
 key('v', '<A-k>', ":move '<-2<CR>gv=gv", 'Move selection up')
 key('v', '<C-k>', '<Esc>', 'Leave visual mode')
 
---------------------------
--------- Harpoon ---------
---------------------------
-
-local harpoon = require('harpoon')
-
-key('n', '<leader>m', function()
-  harpoon.ui:toggle_quick_menu(harpoon:list())
-end, '[Harpoon]: Show mark menu')
-key('n', '<leader>h', function()
-  harpoon:list():add()
-end, '[Harpoon]: Add current file')
-key('n', '<leader>J', function()
-  harpoon:list():select(1)
-end, '[Harpoon]: Goto mark 1')
-key('n', '<leader>K', function()
-  harpoon:list():select(2)
-end, '[Harpoon]: Goto mark 2')
-key('n', '<leader>L', function()
-  harpoon:list():select(3)
-end, '[Harpoon]: Goto mark 3')
-key('n', '<leader>H', function()
-  harpoon:list():select(4)
-end, '[Harpoon]: Goto mark 4')
+-- NOTE: Harpoon keybinds moved to plugins/harpoon.lua for lazy loading
 
 -----------------
 ----- Neorg -----
