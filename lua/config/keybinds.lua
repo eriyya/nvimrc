@@ -159,25 +159,42 @@ autocmd('LspAttach', {
       require('lsp.util.format').format()
     end, '[LSP] Format document')
 
-    key('n', 'gd', '<cmd>Telescope lsp_definitions<CR>', '[LSP] Goto Definitions')
+    -- Navigation
+    key('n', 'gd', '<cmd>Telescope lsp_definitions<CR>', '[LSP] Goto Definition')
+    key('n', 'gD', vim.lsp.buf.declaration, '[LSP] Goto Declaration')
     key('n', 'gr', ':Lspsaga finder ref<CR>', '[LSP] Find references')
-    key('n', 'gI', '<cmd>Telescope lsp_implementations<CR>', '[LSP] Goto Implementations')
-    key('n', '<leader>D', '<cmd>Telescope lsp_type_definitions<CR>', '[LSP] Goto Type Definitions')
+    key('n', 'gI', '<cmd>Telescope lsp_implementations<CR>', '[LSP] Goto Implementation')
+    key('n', '<leader>D', '<cmd>Telescope lsp_type_definitions<CR>', '[LSP] Goto Type Definition')
+
+    -- Symbols
     key('n', '<C-s>', '<cmd>Telescope lsp_document_symbols<CR>', '[LSP] Document Symbols')
     key('n', '<leader>ws', '<cmd>Telescope lsp_dynamic_workspace_symbols<CR>', '[LSP] Workspace Symbols')
-    key('n', 'K', require('custom.hover').hover, '[LSP] Show hover docs')
+
+    -- Call hierarchy
+    key('n', '<leader>ci', '<cmd>Telescope lsp_incoming_calls<CR>', '[LSP] Incoming calls')
+    key('n', '<leader>co', '<cmd>Telescope lsp_outgoing_calls<CR>', '[LSP] Outgoing calls')
+
+    -- Info & actions
+    -- key('n', 'K', require('custom.hover').hover, '[LSP] Show hover docs')
+    key('n', 'K', vim.lsp.buf.hover, '[LSP] Show hover docs')
     key('n', '<leader>rn', ':Lspsaga rename<CR>', '[LSP] Rename')
     key({ 'n', 'x' }, '<leader>a', ':Lspsaga code_action<CR>', '[LSP] Code Action')
     key({ 'i' }, '<C-k>', vim.lsp.buf.signature_help, '[LSP] Show signature help')
 
+    -- Diagnostics
+    key('n', '<leader>e', vim.diagnostic.open_float, '[LSP] Show line diagnostics')
     key('n', '[d', fn(vim.diagnostic.jump, { count = -1, float = true }), '[LSP] Goto prev diagnostic')
     key('n', ']d', fn(vim.diagnostic.jump, { count = 1, float = true }), '[LSP] Goto next diagnostic')
+    key('n', '<leader>q', '<cmd>Trouble diagnostics toggle<CR>', '[LSP] Toggle diagnostics list')
+
+    -- Codelens
+    key('n', '<leader>cl', vim.lsp.codelens.run, '[LSP] Run codelens')
 
     -- Toggle inlay hints
     if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
       key('n', '<leader>th', function()
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = ev.buf }))
-      end, 'Toggle Inlay Hints')
+      end, '[LSP] Toggle Inlay Hints')
     end
 
     ---------------

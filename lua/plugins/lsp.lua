@@ -64,6 +64,10 @@ return {
   -- Mason --
   -----------
   { 'williamboman/mason.nvim', event = { 'VeryLazy' } },
+  -----------------
+  -- Schemastore --
+  -----------------
+  { 'b0o/schemastore.nvim', lazy = true },
   -------------
   -- LspSaga --
   -------------

@@ -114,16 +114,46 @@ M.init = function()
   vim.diagnostic.config({
     virtual_text = {
       prefix = '',
+      spacing = 4,
       format = function(diagnostic)
         local severity = diagnostic.severity
         local icon = virtual_icons[severity]
         return icon .. '  ' .. diagnostic.message
       end,
     },
+    signs = {
+      text = {
+        [vim.diagnostic.severity.ERROR] = '',
+        [vim.diagnostic.severity.WARN] = '',
+        [vim.diagnostic.severity.HINT] = '',
+        [vim.diagnostic.severity.INFO] = '',
+      },
+    },
+    underline = true,
+    update_in_insert = false, -- Don't update diagnostics in insert mode (less noisy)
     severity_sort = true,
     float = {
       source = true,
+      border = 'rounded',
+      header = '',
+      prefix = '',
     },
+  })
+
+  -- Enable inlay hints by default
+  vim.lsp.inlay_hint.enable(true)
+
+  -- Codelens support - refresh on certain events
+  vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'InsertLeave' }, {
+    callback = function(ev)
+      local clients = vim.lsp.get_clients({ bufnr = ev.buf })
+      for _, client in ipairs(clients) do
+        if client:supports_method('textDocument/codeLens') then
+          vim.lsp.codelens.refresh({ bufnr = ev.buf })
+          break
+        end
+      end
+    end,
   })
 end
 
