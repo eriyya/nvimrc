@@ -5,6 +5,42 @@ M.config = {
   width = 40,
   side = 'left', -- 'left' or 'right'
   filetype = 'EditorOffset',
+  -- Filetypes to ignore when counting main editor windows
+  ignored_filetypes = {
+    'neo-tree',
+    'NvimTree',
+    'Trouble',
+    'trouble',
+    'qf', -- quickfix
+    'help',
+    'fugitive',
+    'fugitiveblame',
+    'git',
+    'gitcommit',
+    'DiffviewFiles',
+    'DiffviewFileHistory',
+    'dap-repl',
+    'dapui_console',
+    'dapui_watches',
+    'dapui_stacks',
+    'dapui_breakpoints',
+    'dapui_scopes',
+    'toggleterm',
+    'terminal',
+    'snacks_terminal',
+    'lazy',
+    'mason',
+    'notify',
+    'noice',
+    'TelescopePrompt',
+    'lspsagafinder',
+    'lspsagarename',
+    'lspsagacodeaction',
+    'Outline',
+    'aerial',
+    'undotree',
+    'diff',
+  },
 }
 
 -- State
@@ -13,7 +49,7 @@ local state = {
   winid = nil,
   augroup = nil,
   enabled = false, -- Whether the user wants the offset to be shown
-  suspended = false, -- Whether the offset is temporarily hidden (e.g., NeoTree is open)
+  suspended = false, -- Whether the offset is temporarily hidden
 }
 
 --- Create the scratch buffer for the offset
@@ -50,6 +86,21 @@ local function set_window_options(winid)
   vim.wo[winid].statuscolumn = ''
 end
 
+--- Check if a filetype should be ignored when counting main windows
+---@param ft string
+---@return boolean
+local function is_ignored_filetype(ft)
+  if ft == M.config.filetype then
+    return true
+  end
+  for _, ignored in ipairs(M.config.ignored_filetypes) do
+    if ft == ignored then
+      return true
+    end
+  end
+  return false
+end
+
 --- Check if NeoTree is currently open
 local function is_neotree_open()
   for _, win in ipairs(vim.api.nvim_list_wins()) do
@@ -60,6 +111,109 @@ local function is_neotree_open()
     end
   end
   return false
+end
+
+--- Count the number of main horizontal (side-by-side) editor windows
+--- Ignores bottom panels, sidebars, and other special windows
+---@return number
+local function count_main_horizontal_windows()
+  local wins = vim.api.nvim_list_wins()
+  local main_wins = {}
+
+  for _, win in ipairs(wins) do
+    local buf = vim.api.nvim_win_get_buf(win)
+    local ft = vim.bo[buf].filetype
+
+    -- Skip ignored filetypes
+    if not is_ignored_filetype(ft) then
+      local config = vim.api.nvim_win_get_config(win)
+      -- Skip floating windows
+      if config.relative == '' then
+        table.insert(main_wins, win)
+      end
+    end
+  end
+
+  -- Now filter to only count windows that are horizontally arranged (side by side)
+  -- We do this by checking if windows share the same row range
+  if #main_wins <= 1 then
+    return #main_wins
+  end
+
+  -- Get the positions of all main windows
+  local win_info = {}
+  for _, win in ipairs(main_wins) do
+    local pos = vim.api.nvim_win_get_position(win)
+    local height = vim.api.nvim_win_get_height(win)
+    table.insert(win_info, {
+      win = win,
+      row = pos[1],
+      col = pos[2],
+      height = height,
+      row_end = pos[1] + height,
+    })
+  end
+
+  -- Find windows that overlap vertically (meaning they are side-by-side horizontally)
+  -- Group windows by their vertical overlap
+  local horizontal_count = 0
+  local counted = {}
+
+  for i, w1 in ipairs(win_info) do
+    if not counted[i] then
+      local group_count = 1
+      counted[i] = true
+
+      for j, w2 in ipairs(win_info) do
+        if i ~= j and not counted[j] then
+          -- Check if windows overlap vertically (share row space)
+          local overlap = math.min(w1.row_end, w2.row_end) - math.max(w1.row, w2.row)
+          -- Consider them side-by-side if they overlap by at least 50% of the smaller window's height
+          local min_height = math.min(w1.height, w2.height)
+          if overlap > min_height * 0.5 then
+            group_count = group_count + 1
+            counted[j] = true
+          end
+        end
+      end
+
+      -- Track the maximum number of side-by-side windows found
+      if group_count > horizontal_count then
+        horizontal_count = group_count
+      end
+    end
+  end
+
+  return horizontal_count
+end
+
+--- Check if the offset should be suspended (NeoTree open or multiple horizontal windows)
+---@return boolean
+local function should_suspend()
+  if is_neotree_open() then
+    return true
+  end
+  if count_main_horizontal_windows() > 1 then
+    return true
+  end
+  return false
+end
+
+--- Update the offset visibility based on current window state
+local function update_offset_visibility()
+  if not state.enabled then
+    return
+  end
+
+  local should_hide = should_suspend()
+
+  if should_hide and M.is_open() then
+    state.suspended = true
+    M.close()
+  elseif not should_hide and state.suspended and not M.is_open() then
+    state.suspended = false
+    M.open()
+  end
 end
 
 --- Setup autocommands for the offset
@@ -96,7 +250,7 @@ local function setup_autocommands()
     end,
   })
 
-  -- Handle window close to clean up state and detect NeoTree closing
+  -- Handle window close - check if we need to restore offset
   vim.api.nvim_create_autocmd('WinClosed', {
     group = state.augroup,
     callback = function(args)
@@ -105,26 +259,42 @@ local function setup_autocommands()
         state.winid = nil
       end
 
-      -- Check if NeoTree was closed and we need to restore offset
-      -- Defer to allow the window to fully close
+      -- Defer to allow the window to fully close, then check visibility
       vim.defer_fn(function()
-        if state.enabled and state.suspended and not is_neotree_open() then
-          state.suspended = false
-          M.open()
-        end
+        update_offset_visibility()
       end, 10)
     end,
   })
 
-  -- Handle NeoTree opening - suspend editor offset
+  -- Handle new window creation - check if we need to hide offset
+  vim.api.nvim_create_autocmd('WinNew', {
+    group = state.augroup,
+    callback = function()
+      -- Defer to allow the window to be fully configured
+      vim.defer_fn(function()
+        update_offset_visibility()
+      end, 10)
+    end,
+  })
+
+  -- Handle NeoTree and other special filetypes opening
   vim.api.nvim_create_autocmd('FileType', {
     group = state.augroup,
     pattern = 'neo-tree',
     callback = function()
-      if state.enabled and M.is_open() then
-        state.suspended = true
-        M.close()
-      end
+      vim.defer_fn(function()
+        update_offset_visibility()
+      end, 10)
+    end,
+  })
+
+  -- Also check on BufWinEnter for cases where windows are reused
+  vim.api.nvim_create_autocmd('BufWinEnter', {
+    group = state.augroup,
+    callback = function()
+      vim.defer_fn(function()
+        update_offset_visibility()
+      end, 10)
     end,
   })
 end
@@ -140,8 +310,8 @@ function M.open()
     return
   end
 
-  -- Don't open if NeoTree is currently open
-  if is_neotree_open() then
+  -- Don't open if we should be suspended
+  if should_suspend() then
     state.suspended = true
     return
   end
