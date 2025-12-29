@@ -154,35 +154,11 @@ autocmd('LspAttach', {
   callback = function(ev)
     local client = vim.lsp.get_client_by_id(ev.data.client_id)
 
-    local format = function()
-      local bufnr = vim.api.nvim_get_current_buf()
-      local fmt = require('conform')
-      local ignored_for_count = { 'codespell', 'trim_whitespace' }
-      local formatters = fmt.list_formatters(bufnr)
+    -- Use centralized format function (handles Conform + ESLint fix-all)
+    key('n', '<leader>f', function()
+      require('lsp.util.format').format()
+    end, '[LSP] Format document')
 
-      local real_formatters = {}
-      for _, formatter in ipairs(formatters) do
-        if not vim.tbl_contains(ignored_for_count, formatter.name) then
-          table.insert(real_formatters, formatter)
-        end
-      end
-
-      if #real_formatters == 0 then
-        fmt.format({ bufnr = bufnr, lsp_format = 'last', async = false, timeout_ms = 3000 })
-      else
-        fmt.format({ bufnr = bufnr, lsp_format = 'fallback', async = false, timeout_ms = 3000 })
-      end
-
-      if client and client.name == 'eslint' then
-        util.try(function()
-          vim.cmd('silent LspEslintFixAll')
-        end, function()
-          vim.notify('Failed formatting using ESLint')
-        end)
-      end
-    end
-
-    key('n', '<leader>f', format, '[LSP] Format document')
     key('n', 'gd', '<cmd>Telescope lsp_definitions<CR>', '[LSP] Goto Definitions')
     key('n', 'gr', ':Lspsaga finder ref<CR>', '[LSP] Find references')
     key('n', 'gI', '<cmd>Telescope lsp_implementations<CR>', '[LSP] Goto Implementations')
