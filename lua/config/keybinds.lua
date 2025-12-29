@@ -61,6 +61,11 @@ key('n', '<leader>tt', ':Trouble diagnostics toggle win.relative=win<CR>', 'Show
 -- NeoTree
 key('n', '<C-n>', '<cmd>Neotree toggle<CR>', 'Toggle NeoTree')
 
+-- Editor Offset
+key('n', '<leader>eo', function()
+  require('custom.editor-offset').toggle()
+end, 'Toggle editor offset sidebar')
+
 -- Lazygit
 key('n', '<leader>lg', require('snacks.lazygit').open, 'Toggle Lazygit')
 
