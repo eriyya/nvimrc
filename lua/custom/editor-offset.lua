@@ -348,7 +348,7 @@ function M.close()
     return
   end
 
-  vim.api.nvim_win_close(state.winid, true)
+  vim.api.nvim_buf_delete(state.bufnr, { force = true })
   state.winid = nil
 end
 

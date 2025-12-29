@@ -1,3 +1,5 @@
+local eo = require('custom.editor-offset')
+
 return {
   'romgrk/barbar.nvim',
   -- event = 'VeryLazy',
@@ -10,6 +12,7 @@ return {
   opts = {
     sidebar_filetypes = {
       ['neo-tree'] = { event = 'BufWipeout' },
+      [eo.config.filetype] = { event = 'BufWipeout' },
       undotree = {
         text = 'undotree',
       },
