@@ -212,7 +212,7 @@ autocmd('LspAttach', {
     key('n', '<leader>D', '<cmd>Telescope lsp_type_definitions<CR>', '[LSP] Goto Type Definitions')
     key('n', '<C-s>', '<cmd>Telescope lsp_document_symbols<CR>', '[LSP] Document Symbols')
     key('n', '<leader>ws', '<cmd>Telescope lsp_dynamic_workspace_symbols<CR>', '[LSP] Workspace Symbols')
-    key('n', 'K', vim.lsp.buf.hover, '[LSP] Show hover docs')
+    key('n', 'K', require('custom.hover').hover, '[LSP] Show hover docs')
     key('n', '<leader>rn', ':Lspsaga rename<CR>', '[LSP] Rename')
     key({ 'n', 'x' }, '<leader>a', ':Lspsaga code_action<CR>', '[LSP] Code Action')
     key({ 'i' }, '<C-k>', vim.lsp.buf.signature_help, '[LSP] Show signature help')
