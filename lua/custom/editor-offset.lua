@@ -2,7 +2,7 @@ local M = {}
 
 -- Configuration
 M.config = {
-  width = 30,
+  width = 40,
   side = 'left', -- 'left' or 'right'
   filetype = 'EditorOffset',
 }
@@ -12,6 +12,8 @@ local state = {
   bufnr = nil,
   winid = nil,
   augroup = nil,
+  enabled = false, -- Whether the user wants the offset to be shown
+  suspended = false, -- Whether the offset is temporarily hidden (e.g., NeoTree is open)
 }
 
 --- Create the scratch buffer for the offset
@@ -48,6 +50,18 @@ local function set_window_options(winid)
   vim.wo[winid].statuscolumn = ''
 end
 
+--- Check if NeoTree is currently open
+local function is_neotree_open()
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    local buf = vim.api.nvim_win_get_buf(win)
+    local ft = vim.bo[buf].filetype
+    if ft == 'neo-tree' then
+      return true
+    end
+  end
+  return false
+end
+
 --- Setup autocommands for the offset
 local function setup_autocommands()
   if state.augroup then
@@ -82,13 +96,34 @@ local function setup_autocommands()
     end,
   })
 
-  -- Handle window close to clean up state
+  -- Handle window close to clean up state and detect NeoTree closing
   vim.api.nvim_create_autocmd('WinClosed', {
     group = state.augroup,
     callback = function(args)
       local closed_winid = tonumber(args.match)
       if closed_winid == state.winid then
         state.winid = nil
+      end
+
+      -- Check if NeoTree was closed and we need to restore offset
+      -- Defer to allow the window to fully close
+      vim.defer_fn(function()
+        if state.enabled and state.suspended and not is_neotree_open() then
+          state.suspended = false
+          M.open()
+        end
+      end, 10)
+    end,
+  })
+
+  -- Handle NeoTree opening - suspend editor offset
+  vim.api.nvim_create_autocmd('FileType', {
+    group = state.augroup,
+    pattern = 'neo-tree',
+    callback = function()
+      if state.enabled and M.is_open() then
+        state.suspended = true
+        M.close()
       end
     end,
   })
@@ -102,6 +137,12 @@ end
 --- Open the offset sidebar
 function M.open()
   if M.is_open() then
+    return
+  end
+
+  -- Don't open if NeoTree is currently open
+  if is_neotree_open() then
+    state.suspended = true
     return
   end
 
@@ -143,11 +184,19 @@ end
 
 --- Toggle the offset sidebar
 function M.toggle()
-  if M.is_open() then
+  if state.enabled then
+    state.enabled = false
+    state.suspended = false
     M.close()
   else
+    state.enabled = true
     M.open()
   end
+end
+
+--- Check if the offset is enabled (user wants it shown)
+function M.is_enabled()
+  return state.enabled
 end
 
 --- Setup with custom configuration
@@ -156,6 +205,10 @@ function M.setup(opts)
   if opts then
     M.config = vim.tbl_deep_extend('force', M.config, opts)
   end
+  setup_autocommands()
 end
+
+-- Initialize autocommands on load
+setup_autocommands()
 
 return M
