@@ -8,6 +8,15 @@ return {
       'MunifTanjim/nui.nvim',
       'nvim-tree/nvim-web-devicons',
     },
+    init = function()
+      vim.api.nvim_create_autocmd('VimEnter', {
+        callback = function()
+          if vim.fn.isdirectory(vim.fn.expand('%')) == 1 then
+            vim.cmd('Neotree show')
+          end
+        end,
+      })
+    end,
     opts = {
       filesystem = {
         follow_current_file = {

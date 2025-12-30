@@ -1,7 +1,7 @@
 return {
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
-    event = 'VeryLazy',
+    event = vim.fn.argc() == 0 and 'VimEnter' or 'VeryLazy',
     config = function()
       if vim.fn.argc() == 0 then
         require('mini.starter').setup()
