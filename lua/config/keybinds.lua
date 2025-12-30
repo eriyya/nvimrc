@@ -34,6 +34,15 @@ end, 'Accept AI suggestions')
 ------ Normal Mode ------
 -------------------------
 
+key('n', '<leader>fc', function()
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    local ok, win_conf = pcall(vim.api.nvim_win_get_config, win)
+    if ok and win_conf.relative ~= '' then
+      vim.api.nvim_win_close(win, true)
+    end
+  end
+end, 'Close all floating windows')
+
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
@@ -53,6 +62,10 @@ key('i', '<A-j>', '<esc><cmd>m .+1<cr>==gi', 'Move Down')
 key('i', '<A-k>', '<esc><cmd>m .-2<cr>==gi', 'Move Up')
 key('v', '<A-j>', ":<C-u>execute \"'<,'>move '>+\" . v:count1<cr>gv=gv", 'Move Down')
 key('v', '<A-k>', ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv=gv", 'Move Up')
+
+-- Increment/Decrement numbers
+key('n', '<C-z>', '<C-a>', 'Increment number under cursor')
+-- key('n', '<C-x>', '<C-x>', 'Decrement number under cursor')
 
 -- Trouble
 key('n', '<leader>td', ':TodoTrouble<CR>', 'Show Trouble todo list')
@@ -149,6 +162,10 @@ end, '[Snacks] Toggle Terminal')
 ------     LSP     -------
 --------------------------
 
+key('n', 'K', function()
+  vim.lsp.buf.hover({ border = 'rounded' })
+end, '[LSP] Show hover docs')
+
 autocmd('LspAttach', {
   group = augroup('UserLspConfig', { clear = true }),
   callback = function(ev)
@@ -175,11 +192,10 @@ autocmd('LspAttach', {
     key('n', '<leader>co', '<cmd>Telescope lsp_outgoing_calls<CR>', '[LSP] Outgoing calls')
 
     -- Info & actions
-    -- key('n', 'K', require('custom.hover').hover, '[LSP] Show hover docs')
-    key('n', 'K', vim.lsp.buf.hover, '[LSP] Show hover docs')
     key('n', '<leader>rn', ':Lspsaga rename<CR>', '[LSP] Rename')
     key({ 'n', 'x' }, '<leader>a', ':Lspsaga code_action<CR>', '[LSP] Code Action')
     key({ 'i' }, '<C-k>', vim.lsp.buf.signature_help, '[LSP] Show signature help')
+    -- key('n', 'K', '<cmd>Lspsaga hover_doc', '[LSP] Show hover docs')
 
     -- Diagnostics
     key('n', '<leader>e', vim.diagnostic.open_float, '[LSP] Show line diagnostics')

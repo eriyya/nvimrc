@@ -5,6 +5,7 @@
 **Neovim >=0.11.3 (only tested on 0.11.3)**
 
 **Dependencies**
+
 - Ripgrep
 - fd
 - Python >=3.9
@@ -25,9 +26,8 @@ Install requirements with Chocolatey or winget etc:
 
 ## Terminal stuff
 
-Currently using [Wezterm](https://github.com/wez/wezterm)
-
-Difftool [delta](https://github.com/dandavison/delta)
+Terminal emulator: [Wezterm](https://github.com/wez/wezterm)  
+Git pager: [delta](https://github.com/dandavison/delta)
 
 ### Fonts
 

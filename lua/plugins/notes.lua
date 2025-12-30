@@ -68,9 +68,16 @@ return {
   {
     lazy = true,
     'MeanderingProgrammer/render-markdown.nvim',
+    ft = { 'markdown', 'Avante' },
     opts = {
       file_types = { 'markdown', 'Avante' },
+      overrides = {
+        buftype = {
+          nofile = {
+            code = { border = 'hide', style = 'normal', disable_background = true },
+          },
+        },
+      },
     },
-    ft = { 'markdown', 'Avante' },
   },
 }
