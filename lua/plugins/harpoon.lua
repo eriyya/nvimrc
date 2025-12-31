@@ -11,7 +11,7 @@ return {
       desc = '[Harpoon]: Show mark menu',
     },
     {
-      '<leader>m',
+      '<leader>ma',
       function()
         require('harpoon'):list():add()
       end,
