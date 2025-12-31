@@ -4,42 +4,42 @@ return {
   dependencies = { 'nvim-lua/plenary.nvim' },
   keys = {
     {
-      '<leader>m',
+      '<leader>ml',
       function()
         require('harpoon').ui:toggle_quick_menu(require('harpoon'):list())
       end,
       desc = '[Harpoon]: Show mark menu',
     },
     {
-      '<leader>h',
+      '<leader>m',
       function()
         require('harpoon'):list():add()
       end,
       desc = '[Harpoon]: Add current file',
     },
     {
-      '<leader>J',
+      '<leader>j',
       function()
         require('harpoon'):list():select(1)
       end,
       desc = '[Harpoon]: Goto mark 1',
     },
     {
-      '<leader>K',
+      '<leader>k',
       function()
         require('harpoon'):list():select(2)
       end,
       desc = '[Harpoon]: Goto mark 2',
     },
     {
-      '<leader>L',
+      '<leader>l',
       function()
         require('harpoon'):list():select(3)
       end,
       desc = '[Harpoon]: Goto mark 3',
     },
     {
-      '<leader>H',
+      '<leader>h',
       function()
         require('harpoon'):list():select(4)
       end,

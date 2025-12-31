@@ -22,6 +22,10 @@ return {
     },
     icons = {
       buffer_index = true,
+      alternate = { buffer_index = true },
+      current = { buffer_index = true },
+      inactive = { buffer_index = true },
+      visible = { buffer_index = true },
     },
   },
   version = '^1.0.0',

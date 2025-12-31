@@ -80,7 +80,7 @@ key('n', '<leader>eo', function()
 end, 'Toggle editor offset sidebar')
 
 -- Lazygit
-key('n', '<leader>lg', require('snacks.lazygit').open, 'Toggle Lazygit')
+key('n', '<leader>G', require('snacks.lazygit').open, 'Toggle Lazygit')
 
 -- Telescope
 key('n', '<C-p>', '<cmd>Telescope find_files<CR>', 'Find files')

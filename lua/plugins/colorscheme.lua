@@ -16,6 +16,12 @@ return {
     config = function(_, opts)
       require('tokyodark').setup(opts) -- calling setup is optional
       vim.cmd([[colorscheme tokyodark]])
+
+      -- Make barbar buffer index visible
+      vim.api.nvim_set_hl(0, 'BufferCurrentIndex', { fg = '#ffffff', bg = '#fe6d85' })
+      vim.api.nvim_set_hl(0, 'BufferInactiveIndex', { fg = '#ffffff', bg = '#4a5057' })
+      vim.api.nvim_set_hl(0, 'BufferAlternateIndex', { fg = '#ffffff', bg = '#4a5057' })
+      vim.api.nvim_set_hl(0, 'BufferVisibleIndex', { fg = '#ffffff', bg = '#4a5057' })
     end,
   },
   {
