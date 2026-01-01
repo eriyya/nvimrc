@@ -15,6 +15,10 @@ local function enable_lsp(lsp_servers)
 end
 
 M.init = function()
+  if vim.g.vscode then
+    return
+  end
+
   require('mason').setup()
 
   enable_lsp({

@@ -15,21 +15,6 @@ end
 key('i', 'kj', '<Esc>', 'Leave insert mode')
 key('i', 'jk', '<Esc>', 'Leave insert mode')
 
--- AI accept inline suggestion
-key('i', '<C-l>', function()
-  -- Supermaven
-  -- local suggestion = require('supermaven-nvim.completion_preview')
-  -- if suggestion.has_suggestion() then
-  --   suggestion.on_accept_suggestion()
-  -- end
-
-  -- Copilot
-  local suggestion = require('copilot.suggestion')
-  if suggestion.is_visible() then
-    suggestion.accept()
-  end
-end, 'Accept AI suggestions')
-
 -------------------------
 ------ Normal Mode ------
 -------------------------
@@ -42,6 +27,8 @@ key('n', '<leader>fc', function()
     end
   end
 end, 'Close all floating windows')
+
+key('n', '<Space>', '<Nop>', 'Disable space key')
 
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -107,27 +94,6 @@ key('n', '<A->>', '<cmd>BufferMoveNext<CR>', 'Move tab right')
 key('n', '<A-c>', '<cmd>BufferClose<CR>', 'Close current tab')
 key('n', '<A-p>', '<cmd>BufferPick<CR>', 'Pick a tab to go to')
 
--- Fuzzy find files
-key('n', '<leader>/', function()
-  local telescope = require('telescope.builtin')
-  local telescope_themes = require('telescope.themes')
-  telescope.current_buffer_fuzzy_find(telescope_themes.get_dropdown({
-    previewer = false,
-  }))
-end, 'Fuzzy find in current buffer')
-
--- Live Grep
-key('n', '<leader>rg', function()
-  local telescope = require('telescope.builtin')
-  telescope.live_grep({
-    prompt_title = 'Live Grep',
-  })
-end, 'Live Grep')
-
---------------------------
------- Visual Mode -------
---------------------------
-
 key('v', '<leader>f', '=', 'Vim format (when no LSP)')
 key('v', 'H', '^', 'Goto start of line (VISUAL MODE)')
 key('v', 'L', '$', 'Goto end of line (VISUAL MODE)')
@@ -136,88 +102,125 @@ key('v', '<A-j>', ":move '>+1<CR>gv=gv", 'Move selection down')
 key('v', '<A-k>', ":move '<-2<CR>gv=gv", 'Move selection up')
 key('v', '<C-k>', '<Esc>', 'Leave visual mode')
 
--- NOTE: Harpoon keybinds moved to plugins/harpoon.lua for lazy loading
+if not vim.g.vscode then
+  -- AI accept inline suggestion
+  key('i', '<C-l>', function()
+    -- Supermaven
+    -- local suggestion = require('supermaven-nvim.completion_preview')
+    -- if suggestion.has_suggestion() then
+    --   suggestion.on_accept_suggestion()
+    -- end
 
------------------
------ Neorg -----
------------------
-
-key('n', '<leader>no', '<cmd>NeorgWorkspace<CR>', 'Open Neorg workspace picker')
-
-------------------
------ Snacks -----
-------------------
-
-local snacks = require('snacks')
-
-key('n', '<leader>bd', function()
-  snacks.bufdelete()
-end, '[Snacks] Delete Buffer')
-key('n', '<leader>gb', snacks.git.blame_line, '[Snacks] Git Blame Line')
-key({ 'n', 't' }, '<leader>;', function()
-  snacks.terminal()
-end, '[Snacks] Toggle Terminal')
-
---------------------------
-------     LSP     -------
---------------------------
-
-key('n', 'K', function()
-  vim.lsp.buf.hover({ border = 'rounded' })
-end, '[LSP] Show hover docs')
-
-autocmd('LspAttach', {
-  group = augroup('UserLspConfig', { clear = true }),
-  callback = function(ev)
-    local client = vim.lsp.get_client_by_id(ev.data.client_id)
-
-    -- Use centralized format function (handles Conform + ESLint fix-all)
-    key('n', '<leader>f', function()
-      require('lsp.util.format').format()
-    end, '[LSP] Format document')
-
-    -- Navigation
-    key('n', 'gd', '<cmd>Telescope lsp_definitions<CR>', '[LSP] Goto Definition')
-    key('n', 'gD', vim.lsp.buf.declaration, '[LSP] Goto Declaration')
-    key('n', 'gr', ':Lspsaga finder ref<CR>', '[LSP] Find references')
-    key('n', 'gI', '<cmd>Telescope lsp_implementations<CR>', '[LSP] Goto Implementation')
-    key('n', '<leader>D', '<cmd>Telescope lsp_type_definitions<CR>', '[LSP] Goto Type Definition')
-
-    -- Symbols
-    key('n', '<C-s>', '<cmd>Telescope lsp_document_symbols<CR>', '[LSP] Document Symbols')
-    key('n', '<leader>ws', '<cmd>Telescope lsp_dynamic_workspace_symbols<CR>', '[LSP] Workspace Symbols')
-
-    -- Call hierarchy
-    key('n', '<leader>ci', '<cmd>Telescope lsp_incoming_calls<CR>', '[LSP] Incoming calls')
-    key('n', '<leader>co', '<cmd>Telescope lsp_outgoing_calls<CR>', '[LSP] Outgoing calls')
-
-    -- Info & actions
-    key('n', '<leader>rn', ':Lspsaga rename<CR>', '[LSP] Rename')
-    key({ 'n', 'x' }, '<leader>a', ':Lspsaga code_action<CR>', '[LSP] Code Action')
-    key({ 'i' }, '<C-k>', vim.lsp.buf.signature_help, '[LSP] Show signature help')
-    -- key('n', 'K', '<cmd>Lspsaga hover_doc', '[LSP] Show hover docs')
-
-    -- Diagnostics
-    key('n', '<leader>e', vim.diagnostic.open_float, '[LSP] Show line diagnostics')
-    key('n', '[d', fn(vim.diagnostic.jump, { count = -1, float = true }), '[LSP] Goto prev diagnostic')
-    key('n', ']d', fn(vim.diagnostic.jump, { count = 1, float = true }), '[LSP] Goto next diagnostic')
-    key('n', '<leader>q', '<cmd>Trouble diagnostics toggle<CR>', '[LSP] Toggle diagnostics list')
-
-    -- Codelens
-    key('n', '<leader>cl', vim.lsp.codelens.run, '[LSP] Run codelens')
-
-    -- Toggle inlay hints
-    if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
-      key('n', '<leader>th', function()
-        vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = ev.buf }))
-      end, '[LSP] Toggle Inlay Hints')
+    -- Copilot
+    local suggestion = require('copilot.suggestion')
+    if suggestion.is_visible() then
+      suggestion.accept()
     end
+  end, 'Accept AI suggestions')
 
-    ---------------
-    ----- DAP -----
-    ---------------
+  -- Fuzzy find files
+  key('n', '<leader>/', function()
+    local telescope = require('telescope.builtin')
+    local telescope_themes = require('telescope.themes')
+    telescope.current_buffer_fuzzy_find(telescope_themes.get_dropdown({
+      previewer = false,
+    }))
+  end, 'Fuzzy find in current buffer')
 
-    key('n', '<leader>db', '<cmd>DapToggleBreakpoint<CR>', '[Debugger] Toggle breakpoint')
-    key('n', '<leader>dr', '<cmd>DapContinue<CR>', '[Debugger] Continue/Start')
-  end,
-})
+  -- Live Grep
+  key('n', '<leader>rg', function()
+    local telescope = require('telescope.builtin')
+    telescope.live_grep({
+      prompt_title = 'Live Grep',
+    })
+  end, 'Live Grep')
+  -----------------
+  ----- Neorg -----
+  -----------------
+  key('n', '<leader>no', '<cmd>NeorgWorkspace<CR>', 'Open Neorg workspace picker')
+
+  ------------------
+  ----- Snacks -----
+  ------------------
+  local snacks = require('snacks')
+
+  key('n', '<leader>bd', function()
+    snacks.bufdelete()
+  end, '[Snacks] Delete Buffer')
+  key('n', '<leader>gb', snacks.git.blame_line, '[Snacks] Git Blame Line')
+  key({ 'n', 't' }, '<leader>;', function()
+    snacks.terminal()
+  end, '[Snacks] Toggle Terminal')
+
+  --------------------------
+  ------     LSP     -------
+  --------------------------
+
+  key('n', 'K', function()
+    vim.lsp.buf.hover({ border = 'rounded' })
+  end, '[LSP] Show hover docs')
+
+  autocmd('LspAttach', {
+    group = augroup('UserLspConfig', { clear = true }),
+    callback = function(ev)
+      local client = vim.lsp.get_client_by_id(ev.data.client_id)
+
+      -- Use centralized format function (handles Conform + ESLint fix-all)
+      key('n', '<leader>f', function()
+        require('lsp.util.format').format()
+      end, '[LSP] Format document')
+
+      -- Navigation
+      key('n', 'gd', '<cmd>Telescope lsp_definitions<CR>', '[LSP] Goto Definition')
+      key('n', 'gD', vim.lsp.buf.declaration, '[LSP] Goto Declaration')
+      key('n', 'gr', ':Lspsaga finder ref<CR>', '[LSP] Find references')
+      key('n', 'gI', '<cmd>Telescope lsp_implementations<CR>', '[LSP] Goto Implementation')
+      key('n', '<leader>D', '<cmd>Telescope lsp_type_definitions<CR>', '[LSP] Goto Type Definition')
+
+      -- Symbols
+      key('n', '<C-s>', '<cmd>Telescope lsp_document_symbols<CR>', '[LSP] Document Symbols')
+      key('n', '<leader>ws', '<cmd>Telescope lsp_dynamic_workspace_symbols<CR>', '[LSP] Workspace Symbols')
+
+      -- Call hierarchy
+      key('n', '<leader>ci', '<cmd>Telescope lsp_incoming_calls<CR>', '[LSP] Incoming calls')
+      key('n', '<leader>co', '<cmd>Telescope lsp_outgoing_calls<CR>', '[LSP] Outgoing calls')
+
+      -- Info & actions
+      key('n', '<leader>rn', ':Lspsaga rename<CR>', '[LSP] Rename')
+      key({ 'n', 'x' }, '<leader>a', ':Lspsaga code_action<CR>', '[LSP] Code Action')
+      key({ 'i' }, '<C-k>', vim.lsp.buf.signature_help, '[LSP] Show signature help')
+      -- key('n', 'K', '<cmd>Lspsaga hover_doc', '[LSP] Show hover docs')
+
+      -- Diagnostics
+      key('n', '<leader>e', vim.diagnostic.open_float, '[LSP] Show line diagnostics')
+      key('n', '[d', fn(vim.diagnostic.jump, { count = -1, float = true }), '[LSP] Goto prev diagnostic')
+      key('n', ']d', fn(vim.diagnostic.jump, { count = 1, float = true }), '[LSP] Goto next diagnostic')
+      key('n', '<leader>q', '<cmd>Trouble diagnostics toggle<CR>', '[LSP] Toggle diagnostics list')
+
+      -- Codelens
+      key('n', '<leader>cl', vim.lsp.codelens.run, '[LSP] Run codelens')
+
+      -- Toggle inlay hints
+      if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+        key('n', '<leader>th', function()
+          vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = ev.buf }))
+        end, '[LSP] Toggle Inlay Hints')
+      end
+
+      ---------------
+      ----- DAP -----
+      ---------------
+
+      key('n', '<leader>db', '<cmd>DapToggleBreakpoint<CR>', '[Debugger] Toggle breakpoint')
+      key('n', '<leader>dr', '<cmd>DapContinue<CR>', '[Debugger] Continue/Start')
+    end,
+  })
+end
+
+-- VScode specific keybinds
+if vim.g.vscode then
+  local vscode = require('vscode')
+  key('n', '<leader>f', function()
+    vscode.action('editor.action.formatDocument')
+  end, '[VScode] Format Document')
+end

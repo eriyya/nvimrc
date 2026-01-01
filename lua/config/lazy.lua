@@ -33,9 +33,14 @@ if require('util').IS_WINDOWS then
   table.insert(disabled_plugins, 'man')
 end
 
+local plugin_spec = 'plugins'
+if vim.g.vscode then
+  plugin_spec = 'config/vscode'
+end
+
 -- Setup lazy.nvim
 require('lazy').setup({
-  spec = { import = 'plugins' },
+  spec = { import = plugin_spec },
   pkg = {
     -- sources = {
     --   'lazy',
