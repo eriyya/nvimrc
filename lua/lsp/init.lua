@@ -3,6 +3,10 @@ local util = require('util')
 local M = {}
 
 local function enable_lsp(lsp_servers)
+  lsp_servers = vim.tbl_filter(function(lsp)
+    return not vim.tbl_contains(vim.settings.excluded_lsp, lsp)
+  end, lsp_servers)
+
   for _, lsp in ipairs(lsp_servers) do
     util.try(function()
       local conf = require('lsp.' .. lsp)
@@ -11,6 +15,7 @@ local function enable_lsp(lsp_servers)
       vim.lsp.config(lsp, conf)
     end)
   end
+
   vim.lsp.enable(lsp_servers)
 end
 

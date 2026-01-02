@@ -38,6 +38,9 @@ vim.api.nvim_create_autocmd({ 'BufReadPre', 'FileType' }, {
 
     local servers = util.ternary(type(lsp) == 'table', lsp, { lsp })
     servers = vim.tbl_filter(function(v)
+      if vim.tbl_contains(vim.settings.excluded_lsp, v) then
+        return false
+      end
       return not registry.is_installed(v)
     end, servers)
 

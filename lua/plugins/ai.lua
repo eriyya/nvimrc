@@ -7,7 +7,12 @@ return {
       'copilotlsp-nvim/copilot-lsp',
     },
     config = function()
+      local node_path = vim.settings.copilot_node_path
+      if #node_path == 0 then
+        node_path = 'node'
+      end
       require('copilot').setup({
+        copilot_node_command = node_path,
         suggestion = {
           enabled = true,
           auto_trigger = true,

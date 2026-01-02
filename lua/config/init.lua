@@ -1,3 +1,4 @@
+require('config.settings').init()
 require('config.keybinds')
 require('config.options')
 require('config.autocmd')
