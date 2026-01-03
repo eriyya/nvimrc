@@ -1,7 +1,19 @@
 return {
   {
-    'tiagovla/tokyodark.nvim',
+    'scottmckendry/cyberdream.nvim',
     lazy = false,
+    priority = 1000,
+    opts = {
+      transparent = true,
+    },
+    config = function(_, opts)
+      require('cyberdream').setup(opts)
+      vim.cmd([[colorscheme cyberdream]])
+    end,
+  },
+  {
+    'tiagovla/tokyodark.nvim',
+    lazy = true,
     priority = 1000,
     opts = {
       transparent_background = true,
@@ -14,8 +26,8 @@ return {
       },
     },
     config = function(_, opts)
-      require('tokyodark').setup(opts) -- calling setup is optional
-      vim.cmd([[colorscheme tokyodark]])
+      -- require('tokyodark').setup(opts) -- calling setup is optional
+      -- vim.cmd([[colorscheme tokyodark]])
 
       -- Make barbar buffer index visible
       vim.api.nvim_set_hl(0, 'BufferCurrentIndex', { fg = '#ffffff', bg = '#fe6d85' })
