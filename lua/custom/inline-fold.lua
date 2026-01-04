@@ -1,5 +1,11 @@
 local M = {}
 
+---@class InlineFoldConfig
+---@field filetypes string[] Filetypes where inline fold is enabled
+---@field min_fold_length number Min length of class string to fold
+---@field conceal_text string Text to show when folded
+
+---@type InlineFoldConfig
 M.config = {
   filetypes = {
     'html',
@@ -12,12 +18,14 @@ M.config = {
     'php',
   },
   min_fold_length = 0,
+  conceal_text = '...',
 }
 
 local state = {
   ns_id = nil,
   augroup = nil,
   enabled_buffers = {},
+  last_lines = {}, -- track last cursor line per buffer for reveal/conceal
 }
 
 local function ensure_namespace()
@@ -27,10 +35,10 @@ local function ensure_namespace()
   return state.ns_id
 end
 
---- Create highlight group for hiding text
+--- Create highlight group for the virtual text
 local function setup_highlights()
-  vim.api.nvim_set_hl(0, 'InlineFoldHidden', { link = 'Ignore' })
-  vim.api.nvim_set_hl(0, 'InlineFoldPlaceholder', { link = 'Comment' })
+  -- Set up highlight for the virtual text (conceal indicator)
+  vim.api.nvim_set_hl(0, 'InlineFoldText', { link = 'Comment' })
 end
 
 --- Check if a filetype is supported
@@ -151,20 +159,30 @@ local function get_treesitter_matches(bufnr, start_row, end_row)
   return matches
 end
 
---- Create folds for entire buffer
+--- Create folds for entire buffer, optionally excluding a line
 ---@param bufnr number
-local function create_buffer_folds(bufnr)
+---@param exclude_line number|nil Line to exclude from folding (0-indexed)
+local function create_buffer_folds(bufnr, exclude_line)
   local ns_id = ensure_namespace()
 
   vim.api.nvim_buf_clear_namespace(bufnr, ns_id, 0, -1)
 
   local matches = get_treesitter_matches(bufnr)
   for _, match in ipairs(matches) do
-    vim.api.nvim_buf_set_extmark(bufnr, ns_id, match.line, match.start_col, {
-      end_col = match.end_col,
-      conceal = '…',
-      hl_group = 'Comment',
-    })
+    -- Skip the excluded line (current cursor line)
+    if match.line ~= exclude_line then
+      -- Strategy: Use conceal to hide the original text, with inline virt_text
+      -- to show our replacement. This requires conceallevel >= 2.
+      --
+      -- Note: conceal='' means hide completely (no replacement char)
+      -- virt_text_pos='inline' inserts the virtual text at the position
+      vim.api.nvim_buf_set_extmark(bufnr, ns_id, match.line, match.start_col, {
+        end_col = match.end_col,
+        conceal = '',
+        virt_text = { { M.config.conceal_text, 'InlineFoldText' } },
+        virt_text_pos = 'inline',
+      })
+    end
   end
 end
 
@@ -175,6 +193,26 @@ local function clear_buffer_folds(bufnr)
   vim.api.nvim_buf_clear_namespace(bufnr, ns_id, 0, -1)
 end
 
+--- Handle cursor movement - reveal current line, conceal others
+local function handle_cursor_move()
+  local bufnr = vim.api.nvim_get_current_buf()
+
+  if not state.enabled_buffers[bufnr] then
+    return
+  end
+
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local current_line = cursor[1] - 1 -- 0-indexed
+  local last_line = state.last_lines[bufnr]
+
+  -- Only refresh if we moved to a different line
+  if current_line ~= last_line then
+    state.last_lines[bufnr] = current_line
+    -- Recreate folds excluding the current line
+    create_buffer_folds(bufnr, current_line)
+  end
+end
+
 local function setup_autocommands()
   if state.augroup then
     return
@@ -182,11 +220,18 @@ local function setup_autocommands()
 
   state.augroup = vim.api.nvim_create_augroup('InlineFold', { clear = true })
 
+  -- Handle cursor movement to reveal current line
+  vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+    group = state.augroup,
+    callback = handle_cursor_move,
+  })
+
   vim.api.nvim_create_autocmd('BufWritePost', {
     group = state.augroup,
     callback = function(args)
       if state.enabled_buffers[args.buf] then
-        create_buffer_folds(args.buf)
+        local cursor = vim.api.nvim_win_get_cursor(0)
+        create_buffer_folds(args.buf, cursor[1] - 1)
       end
     end,
   })
@@ -197,7 +242,8 @@ local function setup_autocommands()
       if state.enabled_buffers[args.buf] then
         vim.defer_fn(function()
           if vim.api.nvim_buf_is_valid(args.buf) and state.enabled_buffers[args.buf] then
-            create_buffer_folds(args.buf)
+            local cursor = vim.api.nvim_win_get_cursor(0)
+            create_buffer_folds(args.buf, cursor[1] - 1)
           end
         end, 100)
       end
@@ -209,6 +255,7 @@ local function setup_autocommands()
     group = state.augroup,
     callback = function(args)
       state.enabled_buffers[args.buf] = nil
+      state.last_lines[args.buf] = nil
     end,
   })
 end
@@ -232,16 +279,17 @@ function M.enable(bufnr)
   setup_highlights()
   setup_autocommands()
 
-  -- Set conceallevel for this buffer's windows
-  for _, win in ipairs(vim.api.nvim_list_wins()) do
-    if vim.api.nvim_win_get_buf(win) == bufnr then
-      vim.wo[win].conceallevel = 2
-      vim.wo[win].concealcursor = '' -- reveal on all cursor modes
-    end
-  end
+  -- Set conceallevel for this buffer's windows to enable conceal feature
+  -- conceallevel=2 hides concealed text completely (no replacement char shown)
+  vim.api.nvim_set_option_value('conceallevel', 2, { scope = 'local' })
 
   state.enabled_buffers[bufnr] = true
-  create_buffer_folds(bufnr)
+
+  -- Get current cursor line and create folds excluding it
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local current_line = cursor[1] - 1
+  state.last_lines[bufnr] = current_line
+  create_buffer_folds(bufnr, current_line)
 end
 
 --- Disable inline fold for a specific buffer
@@ -250,6 +298,7 @@ function M.disable(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
 
   state.enabled_buffers[bufnr] = nil
+  state.last_lines[bufnr] = nil
   clear_buffer_folds(bufnr)
 end
 
@@ -271,7 +320,8 @@ function M.refresh(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
 
   if state.enabled_buffers[bufnr] then
-    create_buffer_folds(bufnr)
+    local cursor = vim.api.nvim_win_get_cursor(0)
+    create_buffer_folds(bufnr, cursor[1] - 1)
   end
 end
 
@@ -283,8 +333,7 @@ function M.is_enabled(bufnr)
   return state.enabled_buffers[bufnr] == true
 end
 
---- Setup with custom configuration
----@param opts table|nil
+---@param opts InlineFoldConfig|nil
 function M.setup(opts)
   if opts then
     M.config = vim.tbl_deep_extend('force', M.config, opts)

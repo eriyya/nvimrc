@@ -7,6 +7,7 @@
 -- })
 
 require('custom.inline-fold').setup()
+
 vim.api.nvim_create_autocmd('FileType', {
   pattern = {
     'html',
