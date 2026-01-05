@@ -103,6 +103,8 @@ key('v', '<A-k>', ":move '<-2<CR>gv=gv", 'Move selection up')
 key('v', '<C-k>', '<Esc>', 'Leave visual mode')
 
 if not vim.g.vscode then
+  key('n', '<leader>if', '<cmd>InlineFoldToggle<CR>', 'Toggle CSS class inline fold')
+
   -- AI accept inline suggestion
   key('i', '<C-l>', function()
     -- Supermaven

@@ -28,6 +28,7 @@ local state = {
   last_lines = {}, -- track last cursor line per buffer for reveal/conceal
 }
 
+---@return integer
 local function ensure_namespace()
   if not state.ns_id then
     state.ns_id = vim.api.nvim_create_namespace('inline_fold')
