@@ -150,6 +150,8 @@ if vim.g.vscode then
     })
   end
 
+  --- VSCode keymaps
+
   vim.keymap.set('n', '<leader>ml', show_harpoon_quickpick, {
     desc = '[Harpoon]: Show marks (VSCode Quick Pick)',
   })

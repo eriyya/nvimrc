@@ -101,8 +101,8 @@ key('n', '<leader>G', function()
 end, 'Toggle Lazygit', { vscode = false })
 
 -- Telescope
-key('n', '<C-p>', '<cmd>Telescope find_files<CR>', 'Find files')
-key('n', '<C-b>', '<cmd>Telescope buffers<CR>', 'Find buffers')
+key('n', '<C-p>', '<cmd>Telescope find_files<CR>', 'Find files', { vscode = false })
+key('n', '<C-b>', '<cmd>Telescope buffers<CR>', 'Find buffers', { vscode = false })
 
 -- Tabs
 key('n', '<A-1>', '<cmd>BufferGoto 1<CR>', 'Go to tab 1')
