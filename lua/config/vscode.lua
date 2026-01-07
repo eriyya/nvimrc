@@ -159,6 +159,14 @@ if vim.g.vscode then
   vim.keymap.set('n', '<leader>f', function()
     vscode.action('editor.action.formatDocument')
   end, { desc = '[LSP] Format document (VSCode)' })
+
+  vim.keymap.set('n', 'gr', function()
+    vscode.action('editor.action.goToReferences')
+  end, { desc = '[LSP] Go to references (VSCode)' })
+
+  vim.keymap.set('n', '<leader>rn', function()
+    vscode.action('editor.action.rename')
+  end, { desc = '[LSP] Symbol rename (VSCode)' })
 end
 
 return {
