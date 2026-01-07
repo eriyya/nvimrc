@@ -5,7 +5,7 @@ local fn = util.fn
 
 local key = function(mode, keys, func, desc, opts)
   opts = opts or { silent = true, vscode = true }
-  if opts.vscode and vim.g.vscode then
+  if not opts.vscode and vim.g.vscode then
     return
   end
   vim.keymap.set(mode, keys, func, { desc = desc, silent = opts.silent })
