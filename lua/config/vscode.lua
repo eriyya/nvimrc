@@ -24,7 +24,9 @@ if vim.g.vscode then
       end
     end
 
-    table.sort(marks, function(a, b) return a.index < b.index end)
+    table.sort(marks, function(a, b)
+      return a.index < b.index
+    end)
 
     if #marks == 0 then
       vscode.notify('No Harpoon marks set', vim.log.levels.INFO)
@@ -151,6 +153,10 @@ if vim.g.vscode then
   vim.keymap.set('n', '<leader>ml', show_harpoon_quickpick, {
     desc = '[Harpoon]: Show marks (VSCode Quick Pick)',
   })
+
+  vim.keymap.set('n', '<leader>f', function()
+    vscode.action('editor.action.formatDocument')
+  end, { desc = '[LSP] Format document (VSCode)' })
 end
 
 return {
@@ -178,14 +184,8 @@ return {
         n_lines = 500,
         -- Custom textobjects (from LazyVim)
         custom_textobjects = {
-          o = ai.gen_spec.treesitter({ -- code block
-            a = { '@block.outer', '@conditional.outer', '@loop.outer' },
-            i = { '@block.inner', '@conditional.inner', '@loop.inner' },
-          }),
-          f = ai.gen_spec.treesitter({ a = '@function.outer', i = '@function.inner' }), -- function
-          c = ai.gen_spec.treesitter({ a = '@class.outer', i = '@class.inner' }),       -- class
-          t = { '<([%p%w]-)%f[^<%w][^<>]->.-</%1>', '^<.->().*()</[^/]->$' },           -- tags
-          d = { '%f[%d]%d+' },                                                          -- digits
+          t = { '<([%p%w]-)%f[^<%w][^<>]->.-</%1>', '^<.->().*()</[^/]->$' }, -- tags
+          d = { '%f[%d]%d+' }, -- digits
         },
       })
 
@@ -230,143 +230,6 @@ return {
         },
       })
     end,
-  },
-  ------------------
-  --- TREESITTER ---
-  ------------------
-  {
-    'nvim-treesitter/nvim-treesitter',
-    version = false,
-    build = ':TSUpdate',
-    cmd = { 'TSUpdateSync', 'TSUpdate', 'TSInstall' },
-    init = function(plugin)
-      require('lazy.core.loader').add_to_rtp(plugin)
-      require('nvim-treesitter.query_predicates')
-    end,
-    opts = {
-      highlight = {
-        enable = true,
-        use_languagetree = true,
-      },
-      indent = { enable = false },
-      ensure_installed = {
-        'diff',
-        'norg',
-        'go',
-        'gomod',
-        'gowork',
-        'gosum',
-        'bash',
-        'css',
-        'cpp',
-        'c_sharp',
-        'dockerfile',
-        'html',
-        'javascript',
-        'json',
-        'lua',
-        'python',
-        'rust',
-        'scss',
-        'lua',
-        'toml',
-        'tsx',
-        'typescript',
-        'yaml',
-        'markdown',
-        'markdown_inline',
-        'jsdoc',
-        'zig',
-      },
-    },
-    dependencies = {
-      {
-        'windwp/nvim-ts-autotag',
-        config = function()
-          require('nvim-ts-autotag').setup({
-            opts = {
-              enable_close = true,
-              enable_rename = true,
-              enable_close_on_slash = true,
-            },
-          })
-        end,
-      },
-      {
-        'nvim-treesitter/nvim-treesitter-textobjects',
-        init = function()
-          -- disable rtp plugin, as we only need its queries for mini.ai
-          -- In case other textobject modules are enabled, we will load them
-          -- once nvim-treesitter is loaded
-          require('lazy.core.loader').disable_rtp_plugin('nvim-treesitter-textobjects')
-          load_textobjects = true
-        end,
-      },
-      {
-        'nvim-treesitter/nvim-treesitter-context',
-        opts = {
-          max_lines = 1,
-          trim_scope = 'inner',
-        },
-      },
-    },
-    config = function(_, opts)
-      if type(opts.ensure_installed) == 'table' then
-        ---@type table<string, boolean>
-        local added = {}
-        opts.ensure_installed = vim.tbl_filter(function(lang)
-          if added[lang] then
-            return false
-          end
-          added[lang] = true
-          return true
-        end, opts.ensure_installed)
-      end
-      require('nvim-treesitter.configs').setup(opts)
-
-      if load_textobjects then
-        -- PERF: no need to load the plugin, if we only need its queries for mini.ai
-        if opts.textobjects then
-          for _, mod in ipairs({ 'move', 'select', 'swap', 'lsp_interop' }) do
-            if opts.textobjects[mod] and opts.textobjects[mod].enable then
-              local Loader = require('lazy.core.loader')
-              Loader.disabled_rtp_plugins['nvim-treesitter-textobjects'] = nil
-              local plugin = require('lazy.core.config').plugins['nvim-treesitter-textobjects']
-              require('lazy.core.loader').source_runtime(plugin.dir, 'plugin')
-              break
-            end
-          end
-        end
-      end
-    end,
-  },
-  -------------------
-  --- SNACKS.NVIM ---
-  -------------------
-  {
-    'folke/snacks.nvim',
-    priority = 1000,
-    lazy = false,
-    ---@type Snacks.Config
-    opts = {
-      quickfile = { enabled = true },
-      bigfile = { enabled = true },
-      git = { enabled = false },
-      dashboard = { enabled = false },
-      explorer = { enabled = false },
-      indent = { enabled = false },
-      input = { enabled = false },
-      picker = { enabled = false },
-      notifier = { enabled = false },
-      scope = { enabled = false },
-      scroll = { enabled = false },
-      scratch = { enabled = false },
-      statuscolumn = { enabled = true },
-      words = { enabled = true },
-      image = { enabled = false },
-      profiler = { enabled = false },
-      lazygit = { enabled = false },
-    },
   },
   ---------------
   --- HARPOON ---
@@ -419,5 +282,5 @@ return {
     config = function()
       require('harpoon'):setup({})
     end,
-  }
+  },
 }
