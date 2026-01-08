@@ -101,8 +101,14 @@ key('n', '<leader>G', function()
 end, 'Toggle Lazygit', { vscode = false })
 
 -- Telescope
-key('n', '<C-p>', '<cmd>Telescope find_files<CR>', 'Find files', { vscode = false })
-key('n', '<C-b>', '<cmd>Telescope buffers<CR>', 'Find buffers', { vscode = false })
+-- key('n', '<C-p>', '<cmd>Telescope find_files<CR>', 'Find files', { vscode = false })
+key('n', '<C-p>', function()
+  require('snacks').picker.files()
+end, 'Find files', { vscode = false })
+-- key('n', '<C-b>', '<cmd>Telescope buffers<CR>', 'Find buffers', { vscode = false })
+key('n', '<C-b>', function()
+  require('snacks').picker.buffers()
+end, 'Find buffers', { vscode = false })
 
 -- Tabs
 key('n', '<A-1>', '<cmd>BufferGoto 1<CR>', 'Go to tab 1')
@@ -151,10 +157,11 @@ key('n', '<leader>if', '<cmd>InlineFoldToggle<CR>', 'Toggle CSS class inline fol
 
 -- Live Grep
 key('n', '<leader>rg', function()
-  local telescope = require('telescope.builtin')
-  telescope.live_grep({
-    prompt_title = 'Live Grep',
-  })
+  -- local telescope = require('telescope.builtin')
+  -- telescope.live_grep({
+  --   prompt_title = 'Live Grep',
+  -- })
+  require('snacks').picker.grep({ cmd = 'rg' })
 end, 'Live Grep', { vscode = false })
 -----------------
 ----- Neorg -----
@@ -180,19 +187,49 @@ autocmd('LspAttach', {
     end, '[LSP] Format document')
 
     -- Navigation
-    key('n', 'gd', '<cmd>Telescope lsp_definitions<CR>', '[LSP] Goto Definition')
-    key('n', 'gD', vim.lsp.buf.declaration, '[LSP] Goto Declaration')
-    key('n', 'gr', ':Lspsaga finder ref<CR>', '[LSP] Find references')
-    key('n', 'gI', '<cmd>Telescope lsp_implementations<CR>', '[LSP] Goto Implementation')
-    key('n', '<leader>D', '<cmd>Telescope lsp_type_definitions<CR>', '[LSP] Goto Type Definition')
+    local snacks = require('snacks')
+    -- key('n', 'gd', '<cmd>Telescope lsp_definitions<CR>', '[LSP] Goto Definition')
+    key('n', 'gd', function()
+      snacks.picker.lsp_definitions()
+    end, '[LSP] Goto Definition')
+
+    -- key('n', 'gD', vim.lsp.buf.declaration, '[LSP] Goto Declaration')
+    key('n', 'gD', function()
+      snacks.picker.lsp_declarations()
+    end, '[LSP] Goto Declaration')
+
+    -- key('n', 'gr', ':Lspsaga finder ref<CR>', '[LSP] Find references')
+    key('n', 'gr', function()
+      snacks.picker.lsp_references()
+    end, '[LSP] Find references')
+
+    -- key('n', 'gI', '<cmd>Telescope lsp_implementations<CR>', '[LSP] Goto Implementation')
+    key('n', 'gI', function()
+      snacks.picker.lsp_implementations()
+    end, '[LSP] Goto Implementation')
+
+    -- key('n', '<leader>D', '<cmd>Telescope lsp_type_definitions<CR>', '[LSP] Goto Type Definition')
+    key('n', '<leader>D', function()
+      snacks.picker.lsp_type_definitions()
+    end, '[LSP] Goto Type Definition')
 
     -- Symbols
-    key('n', '<C-s>', '<cmd>Telescope lsp_document_symbols<CR>', '[LSP] Document Symbols')
+    -- key('n', '<C-s>', '<cmd>Telescope lsp_document_symbols<CR>', '[LSP] Document Symbols')
+    key('n', '<C-s>', function()
+      snacks.picker.lsp_symbols()
+    end, '[LSP] Document Symbols')
+
     key('n', '<leader>ws', '<cmd>Telescope lsp_dynamic_workspace_symbols<CR>', '[LSP] Workspace Symbols')
 
     -- Call hierarchy
-    key('n', '<leader>ci', '<cmd>Telescope lsp_incoming_calls<CR>', '[LSP] Incoming calls')
-    key('n', '<leader>co', '<cmd>Telescope lsp_outgoing_calls<CR>', '[LSP] Outgoing calls')
+    -- key('n', '<leader>ci', '<cmd>Telescope lsp_incoming_calls<CR>', '[LSP] Incoming calls')
+    key('n', '<leader>ci', function()
+      snacks.picker.lsp_incoming_calls()
+    end, '[LSP] Incoming calls')
+    -- key('n', '<leader>co', '<cmd>Telescope lsp_outgoing_calls<CR>', '[LSP] Outgoing calls')
+    key('n', '<leader>co', function()
+      snacks.picker.lsp_outgoing_calls()
+    end, '[LSP] Outgoing calls')
 
     -- Info & actions
     key('n', '<leader>rn', ':Lspsaga rename<CR>', '[LSP] Rename')
@@ -201,7 +238,10 @@ autocmd('LspAttach', {
     -- key('n', 'K', '<cmd>Lspsaga hover_doc', '[LSP] Show hover docs')
 
     -- Diagnostics
-    key('n', '<leader>e', vim.diagnostic.open_float, '[LSP] Show line diagnostics')
+    -- key('n', '<leader>e', vim.diagnostic.open_float, '[LSP] Show line diagnostics')
+    key('n', '<leader>e', function()
+      snacks.picker.diagnostics_buffer()
+    end, '[LSP] Show line diagnostics')
     key('n', '[d', fn(vim.diagnostic.jump, { count = -1, float = true }), '[LSP] Goto prev diagnostic')
     key('n', ']d', fn(vim.diagnostic.jump, { count = 1, float = true }), '[LSP] Goto next diagnostic')
     key('n', '<leader>q', '<cmd>Trouble diagnostics toggle<CR>', '[LSP] Toggle diagnostics list')
