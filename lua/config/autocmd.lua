@@ -55,4 +55,15 @@ autocmd('FileType', {
   end,
 })
 
-
+-- Reset terminal mouse mode on exit to prevent mouse events leaking to shell
+autocmd('VimLeave', {
+  group = 'General',
+  callback = function()
+    vim.o.mouse = ''
+    -- Send escape sequences to disable mouse tracking
+    io.stdout:write('\x1b[?1000l') -- Disable mouse click tracking
+    io.stdout:write('\x1b[?1002l') -- Disable mouse drag tracking
+    io.stdout:write('\x1b[?1003l') -- Disable all mouse tracking
+    io.stdout:write('\x1b[?1006l') -- Disable SGR extended mouse mode
+  end,
+})
