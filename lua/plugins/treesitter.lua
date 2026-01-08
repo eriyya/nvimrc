@@ -15,6 +15,10 @@ return {
         use_languagetree = true,
       },
       indent = { enable = false },
+      matchup = {
+        enable = true, -- Enable vim-matchup treesitter integration
+        include_match_words = true,
+      },
       ensure_installed = {
         'regex',
         'diff',
@@ -57,6 +61,16 @@ return {
               enable_close_on_slash = true,
             },
           })
+        end,
+      },
+      {
+        'andymass/vim-matchup',
+        init = function()
+          -- Disable the default matchit/matchparen to avoid conflicts
+          vim.g.loaded_matchit = 1
+          vim.g.loaded_matchparen = 1
+          -- Enable treesitter integration for better tag matching
+          vim.g.matchup_matchparen_offscreen = { method = 'popup' }
         end,
       },
       {

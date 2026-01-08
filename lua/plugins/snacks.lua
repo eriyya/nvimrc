@@ -10,7 +10,12 @@ return {
     git = { enabled = true },
     dashboard = { enabled = false },
     explorer = { enabled = false },
-    indent = { enabled = false },
+    indent = {
+      enabled = false,
+      animate = {
+        duration = { step = 10, total = 80 },
+      },
+    },
     input = { enabled = true },
     picker = {
       enabled = true,
@@ -54,7 +59,12 @@ return {
     },
     notifier = { enabled = true, timeout = 2000 },
     scope = { enabled = false },
-    scroll = { enabled = false },
+    scroll = {
+      enabled = true,
+      animate = {
+        duration = { step = 10, total = 80 },
+      },
+    },
     scratch = { enabled = false },
     statuscolumn = { enabled = true },
     words = { enabled = true },
