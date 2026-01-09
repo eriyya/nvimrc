@@ -152,6 +152,9 @@ end, '[Snacks] Git Blame Line', { vscode = false })
 key({ 'n', 't' }, '<leader>;', function()
   require('snacks').terminal()
 end, '[Snacks] Toggle Terminal', { vscode = false })
+key('n', '<leader>mh', function()
+  require('snacks').notifier.show_history()
+end, '[Snacks] Show Notification History', { vscode = false })
 
 key('n', '<leader>if', '<cmd>InlineFoldToggle<CR>', 'Toggle CSS class inline fold', { vscode = false })
 
