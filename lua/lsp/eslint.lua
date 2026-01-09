@@ -57,6 +57,8 @@ local eslint_config_files = {
   'eslint.config.cts',
 }
 
+-- local mason_bin = vim.fn.stdpath('data') .. '/mason/bin'
+
 return {
   cmd = { 'vscode-eslint-language-server', '--stdio' },
   filetypes = {
@@ -164,24 +166,6 @@ return {
         uri = root_dir,
         name = vim.fn.fnamemodify(root_dir, ':t'),
       }
-
-      -- Support flat config files
-      -- They contain 'config' in the file name
-      local flat_config_files = vim.tbl_filter(function(file)
-        return file:match('config')
-      end, eslint_config_files)
-
-      for _, file in ipairs(flat_config_files) do
-        local found_files = vim.fs.find(function(name, path)
-          return name == file and not path:match('[/\\]node_modules[/\\]')
-        end, { path = root_dir, type = 'file', limit = 1 })
-
-        if #found_files > 0 then
-          config.settings.experimental = config.settings.experimental or {}
-          config.settings.experimental.useFlatConfig = true
-          break
-        end
-      end
 
       -- Support Yarn2 (PnP) projects
       local pnp_cjs = root_dir .. '/.pnp.cjs'
