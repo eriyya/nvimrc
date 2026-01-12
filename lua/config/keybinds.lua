@@ -219,7 +219,7 @@ autocmd('LspAttach', {
     -- Symbols
     -- key('n', '<C-s>', '<cmd>Telescope lsp_document_symbols<CR>', '[LSP] Document Symbols')
     key('n', '<C-s>', function()
-      snacks.picker.lsp_symbols()
+      snacks.picker.lsp_symbols({ filter = { default = true } })
     end, '[LSP] Document Symbols')
 
     key('n', '<leader>ws', '<cmd>Telescope lsp_dynamic_workspace_symbols<CR>', '[LSP] Workspace Symbols')
