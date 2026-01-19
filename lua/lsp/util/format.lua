@@ -28,12 +28,18 @@ local eslint_config_files = {
 }
 
 --- Check if ESLint is configured for the current project
+--- @param bufnr number
 --- @return boolean
-local function has_eslint_config()
+local function has_eslint_config(bufnr)
+  local bufname = vim.api.nvim_buf_get_name(bufnr)
+  if bufname == '' then
+    return false
+  end
+
   local found = vim.fs.find(eslint_config_files, {
     upward = true,
     type = 'file',
-    path = vim.fn.expand('%:p:h'),
+    path = vim.fs.dirname(bufname),
   })
 
   return #found > 0
@@ -47,15 +53,43 @@ local function get_eslint_client(bufnr)
   return clients[1]
 end
 
+--- Apply ESLint fix-all to the buffer
+--- @param bufnr number
+--- @param eslint_client vim.lsp.Client
+local function apply_eslint_fixes(bufnr, eslint_client)
+  -- Verify buffer is still valid
+  if not vim.api.nvim_buf_is_valid(bufnr) then
+    return
+  end
+
+  eslint_client:request('workspace/executeCommand', {
+    command = 'eslint.applyAllFixes',
+    arguments = {
+      {
+        uri = vim.uri_from_bufnr(bufnr),
+        version = vim.lsp.util.buf_versions[bufnr],
+      },
+    },
+  }, function(err)
+    if err then
+      vim.notify('ESLint fix-all failed: ' .. tostring(err), vim.log.levels.WARN)
+    end
+  end, bufnr)
+end
+
 --- Format the current buffer using Conform, then apply ESLint fixes if applicable
 --- @param opts? { async?: boolean, bufnr?: number }
 function M.format(opts)
   opts = opts or {}
   local bufnr = opts.bufnr or vim.api.nvim_get_current_buf()
-  local async = opts.async or false
+  local async = opts.async ~= false
 
   local conform = require('conform')
   local filetype = vim.bo[bufnr].filetype
+
+  -- Check ESLint eligibility upfront (before async operations)
+  local should_run_eslint = vim.tbl_contains(eslint_filetypes, filetype) and has_eslint_config(bufnr)
+  local eslint_client = should_run_eslint and get_eslint_client(bufnr) or nil
 
   -- Determine formatters available (excluding utility formatters)
   local ignored_formatters = { 'codespell', 'trim_whitespace' }
@@ -70,8 +104,9 @@ function M.format(opts)
   end
 
   -- Format with Conform
-  -- Use LSP as fallback only if no dedicated formatter exists
-  local lsp_format = has_real_formatter and 'fallback' or 'last'
+  -- 'fallback': Use LSP only if no conform formatters ran
+  -- 'first': Use LSP first, then conform formatters (for filetypes without dedicated formatters)
+  local lsp_format = has_real_formatter and 'fallback' or 'first'
 
   conform.format({
     bufnr = bufnr,
@@ -84,23 +119,12 @@ function M.format(opts)
       return
     end
 
-    -- After formatting, apply ESLint fixes for JS/TS files if:
-    -- 1. The filetype is an ESLint-supported filetype
-    -- 2. The project has an ESLint config
-    -- 3. ESLint LSP is attached
-    if vim.tbl_contains(eslint_filetypes, filetype) then
-      if has_eslint_config() then
-        local eslint_client = get_eslint_client(bufnr)
-        if eslint_client then
-          -- Use vim.schedule to ensure buffer is in correct state
-          vim.schedule(function()
-            local ok, err_msg = pcall(vim.cmd, 'silent LspEslintFixAll')
-            if not ok then
-              vim.notify('ESLint fix-all failed: ' .. tostring(err_msg), vim.log.levels.WARN)
-            end
-          end)
-        end
-      end
+    -- Apply ESLint fixes after Conform formatting completes
+    -- Order: Prettier (via Conform) -> ESLint fix (code quality fixes)
+    if eslint_client then
+      vim.schedule(function()
+        apply_eslint_fixes(bufnr, eslint_client)
+      end)
     end
   end)
 end
