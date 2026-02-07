@@ -2,6 +2,16 @@ if vim.g.vscode then
   local vscode = require('vscode')
   vim.notify = vscode.notify
 
+  -- Force VS Code to re-sync decorations when buffer changes externally
+  -- This helps prevent ghost text artifacts from external file edits (e.g., opencode)
+  vim.api.nvim_create_autocmd({ 'BufEnter', 'FocusGained', 'BufWritePost' }, {
+    callback = function()
+      vim.defer_fn(function()
+        vscode.action('editor.action.forceRetokenize')
+      end, 50)
+    end,
+  })
+
   ---Show Harpoon marks in a vscode quick pick
   local function show_harpoon_quickpick()
     local ok, harpoon = pcall(require, 'harpoon')
