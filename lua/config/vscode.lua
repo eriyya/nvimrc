@@ -177,6 +177,10 @@ if vim.g.vscode then
   vim.keymap.set('n', '<leader>rn', function()
     vscode.action('editor.action.rename')
   end, { desc = '[LSP] Symbol rename (VSCode)' })
+
+  vim.keymap.set({ 'n', 'v' }, '<leader>a', function()
+    vscode.action('editor.action.quickFix')
+  end, { desc = '[LSP] Quick fix (VSCode)' })
 end
 
 return {

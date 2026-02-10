@@ -1,14 +1,29 @@
 return {
   {
-    'scottmckendry/cyberdream.nvim',
+    'https://github.com/Shatur/neovim-ayu',
     lazy = false,
+    priority = 1000,
+    config = function()
+      vim.o.background = 'dark'
+      local ayu = require('ayu')
+      ayu.setup({
+        mirage = false,
+        terminal = false,
+        overrides = {},
+      })
+      ayu.colorscheme()
+    end,
+  },
+  {
+    'scottmckendry/cyberdream.nvim',
+    lazy = true,
     priority = 1000,
     opts = {
       transparent = true,
     },
     config = function(_, opts)
-      require('cyberdream').setup(opts)
-      vim.cmd([[colorscheme cyberdream]])
+      -- require('cyberdream').setup(opts)
+      -- vim.cmd([[colorscheme cyberdream]])
     end,
   },
   {
@@ -30,10 +45,10 @@ return {
       -- vim.cmd([[colorscheme tokyodark]])
 
       -- Make barbar buffer index visible
-      vim.api.nvim_set_hl(0, 'BufferCurrentIndex', { fg = '#ffffff', bg = '#fe6d85' })
-      vim.api.nvim_set_hl(0, 'BufferInactiveIndex', { fg = '#ffffff', bg = '#4a5057' })
-      vim.api.nvim_set_hl(0, 'BufferAlternateIndex', { fg = '#ffffff', bg = '#4a5057' })
-      vim.api.nvim_set_hl(0, 'BufferVisibleIndex', { fg = '#ffffff', bg = '#4a5057' })
+      -- vim.api.nvim_set_hl(0, 'BufferCurrentIndex', { fg = '#ffffff', bg = '#fe6d85' })
+      -- vim.api.nvim_set_hl(0, 'BufferInactiveIndex', { fg = '#ffffff', bg = '#4a5057' })
+      -- vim.api.nvim_set_hl(0, 'BufferAlternateIndex', { fg = '#ffffff', bg = '#4a5057' })
+      -- vim.api.nvim_set_hl(0, 'BufferVisibleIndex', { fg = '#ffffff', bg = '#4a5057' })
     end,
   },
   {
