@@ -45,7 +45,9 @@ vim.opt.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 vim.opt.scrolloff = 10
 
-vim.opt.spelllang = { 'en' }
+if not vim.g.vscode then
+  vim.opt.spelllang = { 'en' }
+end
 
 vim.o.signcolumn = 'yes'
 vim.o.completeopt = 'menuone,noselect'

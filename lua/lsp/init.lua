@@ -120,6 +120,7 @@ M.init = function()
     [vim.diagnostic.severity.HINT] = '',
   }
 
+  local underline = not vim.g.vscode
   vim.diagnostic.config({
     virtual_text = {
       prefix = '',
@@ -138,7 +139,7 @@ M.init = function()
         [vim.diagnostic.severity.INFO] = '',
       },
     },
-    underline = true,
+    underline = underline,
     update_in_insert = false, -- Don't update diagnostics in insert mode (less noisy)
     severity_sort = true,
     float = {

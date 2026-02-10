@@ -51,7 +51,9 @@ autocmd('FileType', {
   pattern = { 'text', 'plaintex', 'typst', 'gitcommit', 'markdown' },
   callback = function()
     vim.opt_local.wrap = true
-    vim.opt_local.spell = true
+    if not vim.g.vscode then
+      vim.opt_local.spell = true
+    end
   end,
 })
 
