@@ -35,7 +35,7 @@ end
 
 local plugin_spec = 'plugins'
 if vim.g.vscode then
-  plugin_spec = 'config/vscode'
+  plugin_spec = 'config/vscode/init'
 end
 
 -- Setup lazy.nvim
