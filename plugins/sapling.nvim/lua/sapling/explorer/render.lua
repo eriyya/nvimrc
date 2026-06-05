@@ -178,7 +178,7 @@ function M.request_git_refresh(ctx, root)
     end
 
     if state_module.is_valid_buf(state.bufnr) then
-      M.render(ctx)
+      M.render(ctx, { focus_selection = false })
     end
   end)
 end
@@ -450,13 +450,7 @@ function M.render(ctx, opts)
 
     local target_line = state.current_selection_path and (state_module.get_header_line_count() + target_entry_line) or 1
 
-    if opts.focus_selection == false then
-      vim.api.nvim_win_call(state.winid, function()
-        local saved_view = vim.fn.winsaveview()
-        vim.api.nvim_win_set_cursor(state.winid, { target_line, 0 })
-        vim.fn.winrestview({ topline = saved_view.topline, topfill = saved_view.topfill })
-      end)
-    else
+    if opts.focus_selection ~= false then
       vim.api.nvim_win_set_cursor(state.winid, { target_line, 0 })
     end
   end

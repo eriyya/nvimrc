@@ -445,7 +445,7 @@ function M.request_index(ctx)
     end
 
     if state_module.is_valid_buf(state.bufnr) then
-      ctx.render.render(ctx)
+      ctx.render.render(ctx, { focus_selection = false })
     end
   end)
 end
