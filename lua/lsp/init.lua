@@ -40,6 +40,7 @@ M.init = function()
     'gopls',
     'clangd',
     'tailwindcss',
+    'copilot-language-server',
   })
 
   -- Setup conform

@@ -16,7 +16,7 @@ augroup('LineNumbers', { clear = true })
 autocmd('InsertEnter', {
   group = 'LineNumbers',
   callback = function()
-    if vim.bo[vim.api.nvim_get_current_buf()].filetype == 'neo-tree' then
+    if vim.b.sapling or vim.bo[vim.api.nvim_get_current_buf()].filetype == 'neo-tree' then
       vim.opt.number = false
     else
       vim.cmd([[set nu nornu]])
@@ -26,7 +26,7 @@ autocmd('InsertEnter', {
 autocmd('InsertLeave', {
   group = 'LineNumbers',
   callback = function()
-    if vim.bo[vim.api.nvim_get_current_buf()].filetype == 'neo-tree' then
+    if vim.b.sapling or vim.bo[vim.api.nvim_get_current_buf()].filetype == 'neo-tree' then
       vim.opt.number = false
     else
       vim.cmd([[set nu rnu]])

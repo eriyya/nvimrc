@@ -67,6 +67,7 @@ return {
   },
   {
     lazy = true,
+    enabled = false,
     'MeanderingProgrammer/render-markdown.nvim',
     ft = { 'markdown', 'Avante' },
     opts = {

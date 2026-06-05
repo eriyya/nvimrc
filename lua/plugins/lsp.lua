@@ -24,6 +24,8 @@ local ft_to_lsp = {
   ps1 = 'powershell-editor-services',
 }
 
+local extra_lsp = { 'codespell', 'copilot-language-server' }
+
 local ft_list = vim.tbl_keys(ft_to_lsp)
 
 vim.api.nvim_create_autocmd({ 'BufReadPre', 'FileType' }, {
@@ -38,9 +40,15 @@ vim.api.nvim_create_autocmd({ 'BufReadPre', 'FileType' }, {
 
     local servers = util.ternary(type(lsp) == 'table', lsp, { lsp })
 
-    if not registry.is_installed('codespell') then
-      table.insert(servers, 'codespell')
+    for _, extra in ipairs(extra_lsp) do
+      if not registry.is_installed(extra) then
+        table.insert(servers, extra)
+      end
     end
+
+    -- if not registry.is_installed('codespell') then
+    --   table.insert(servers, 'codespell')
+    -- end
 
     servers = vim.tbl_filter(function(v)
       if vim.tbl_contains(vim.settings.excluded_lsp, v) then
@@ -67,7 +75,7 @@ return {
   -----------
   -- Mason --
   -----------
-  { 'williamboman/mason.nvim', event = { 'VeryLazy' } },
+  { 'williamboman/mason.nvim', cmd = { 'Mason' }, event = { 'VeryLazy' }, opts = {} },
   -----------------
   -- Schemastore --
   -----------------

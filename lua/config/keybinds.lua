@@ -11,12 +11,11 @@ local key = function(mode, keys, func, desc, opts)
   vim.keymap.set(mode, keys, func, { desc = desc, silent = opts.silent })
 end
 
---------------------------
------- Insert Mode -------
---------------------------
-
 key('i', 'kj', '<Esc>', 'Leave insert mode')
 key('i', 'jk', '<Esc>', 'Leave insert mode')
+
+key('v', 'kj', '<Esc>', 'Leave visual mode')
+key('v', 'jk', '<Esc>', 'Leave visual mode')
 
 -------------------------
 ------ Normal Mode ------
@@ -63,8 +62,9 @@ key('n', '<C-z>', '<C-a>', 'Increment number under cursor')
 key('n', '<leader>td', ':TodoTrouble<CR>', 'Show Trouble todo list')
 key('n', '<leader>tt', ':Trouble diagnostics toggle win.relative=win<CR>', 'Show Trouble diagnostic list')
 
--- NeoTree
-key('n', '<C-n>', '<cmd>Neotree toggle<CR>', 'Toggle NeoTree')
+-- NeoTree / Sapling
+-- key('n', '<C-n>', '<cmd>Neotree toggle<CR>', 'Toggle NeoTree')
+key('n', '<C-n>', '<cmd>SaplingToggle<CR>', 'Toggle Sapling')
 
 -- Fuzzy find files
 key('n', '<leader>/', function()
@@ -170,6 +170,14 @@ end, 'Live Grep', { vscode = false })
 ----- Neorg -----
 -----------------
 key('n', '<leader>no', '<cmd>NeorgWorkspace<CR>', 'Open Neorg workspace picker', { vscode = false })
+
+--------------------------
+------ Treesitter --------
+--------------------------
+
+key('n', 'gC', function()
+  require('treesitter-context').go_to_context(vim.v.count1)
+end, '[Treesitter] Go to context', { vscode = false })
 
 --------------------------
 ------     LSP     -------

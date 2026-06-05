@@ -9,7 +9,13 @@ return {
       ayu.setup({
         mirage = false,
         terminal = false,
-        overrides = {},
+        overrides = {
+          Normal = { bg = 'NONE' },
+          NormalFloat = { bg = 'NONE' },
+          CursorLine = { bg = 'NONE' },
+          SignColumn = { bg = 'NONE' },
+          EndOfBuffer = { bg = 'NONE' },
+        },
       })
       ayu.colorscheme()
     end,
