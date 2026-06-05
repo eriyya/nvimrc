@@ -399,11 +399,12 @@ function M.start_refresh_timer(ctx)
     end
 
     state_module.mark_git_dirty()
-    M.render(ctx)
+    M.render(ctx, { focus_selection = false })
   end))
 end
 
-function M.render(ctx)
+function M.render(ctx, opts)
+  opts = opts or {}
   local state = state_module.state
   local bufnr = ctx.window.ensure_buffer(ctx)
 
@@ -448,7 +449,16 @@ function M.render(ctx)
     end
 
     local target_line = state.current_selection_path and (state_module.get_header_line_count() + target_entry_line) or 1
-    vim.api.nvim_win_set_cursor(state.winid, { target_line, 0 })
+
+    if opts.focus_selection == false then
+      vim.api.nvim_win_call(state.winid, function()
+        local saved_view = vim.fn.winsaveview()
+        vim.api.nvim_win_set_cursor(state.winid, { target_line, 0 })
+        vim.fn.winrestview({ topline = saved_view.topline, topfill = saved_view.topfill })
+      end)
+    else
+      vim.api.nvim_win_set_cursor(state.winid, { target_line, 0 })
+    end
   end
 end
 

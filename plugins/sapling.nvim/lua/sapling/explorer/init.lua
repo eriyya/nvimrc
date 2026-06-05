@@ -185,7 +185,7 @@ function M.setup(opts)
 
         if not state_module.state.config.follow_current_file.enabled then
           if state_module.is_valid_buf(state_module.state.bufnr) then
-            render.render(ctx)
+            render.render(ctx, { focus_selection = false })
           end
           return
         end
@@ -210,7 +210,7 @@ function M.setup(opts)
       end
 
       if state_module.is_valid_buf(state_module.state.bufnr) then
-        render.render(ctx)
+        render.render(ctx, { focus_selection = false })
       end
     end,
   })
@@ -226,7 +226,7 @@ function M.setup(opts)
       end
 
       if state_module.is_valid_win(state_module.state.winid) then
-        render.render(ctx)
+        render.render(ctx, { focus_selection = false })
       end
     end,
   })
